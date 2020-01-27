@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Your Bills</string>
+    <string name="deadline">Deadline:</string>
+    <string name="amount">Amount:</string>
+    <string name="sort_by">Sort by</string>
+    <string name="bill_paid">Paid</string>
+    <string name="bill_description">Description</string>
+    <string name="bill_amount">Amount</string>
+</resources>

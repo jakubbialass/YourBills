@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer name="time_animation_new_fragment">300</integer>
+
+    <integer name="month_name_rotate_time">300</integer>
+
+    <integer name="recycler_slide_out_time">300</integer>
+
+    <integer name="recycler_slide_in_time">300</integer>
+
+    <integer name="filters_slide_time">500</integer>
+
+    <integer name="hide_paid_after_time">300</integer>
+
+</resources>
