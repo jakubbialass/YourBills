@@ -8,4 +8,5 @@
     <color name="paidTextColor">#43a047</color>
     <color name="payButtonColor">#43a047</color>
     <color name="unpayButtonColor">#bdbdbd</color>
+    <color name="pickerColor">#0D47A1</color>
 </resources>

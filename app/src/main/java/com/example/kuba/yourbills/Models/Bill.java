@@ -1,5 +1,9 @@
 package com.example.kuba.yourbills.Models;
 
+import android.content.Context;
+
+import com.example.kuba.yourbills.R;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -17,6 +21,7 @@ public class Bill implements Serializable {
     private int daysLeft;
     private String month;
     private int id;
+    private String notificationTimeBefore;
 
     public enum SortCategory {TITLE, AMOUNT, DEADLINE};
 
@@ -34,7 +39,7 @@ public class Bill implements Serializable {
         setMonth();
     }
 
-    public Bill(String billTitle, String billDescription, float billAmount, Date date, boolean paid, int id){
+    public Bill(String billTitle, String billDescription, float billAmount, Date date, boolean paid, String notificationTimeBefore, int id){
         this.billTitle = billTitle;
         this.billDescription = billDescription;
         this.billAmount = billAmount;
@@ -45,6 +50,7 @@ public class Bill implements Serializable {
         this.billDate = date;
         this.paid = paid;
         this.daysLeft = setDaysLeft(this);
+        this.notificationTimeBefore = notificationTimeBefore;
         setMonth();
     }
 
@@ -162,6 +168,10 @@ public class Bill implements Serializable {
         return this.month;
     }
 
+    public String getNotificationTimeBefore(){
+        return this.notificationTimeBefore;
+    }
+
     private void setMonth(){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMMM yyyy");
         Calendar calendar = simpleDateFormat.getCalendar();
@@ -169,6 +179,7 @@ public class Bill implements Serializable {
         month = simpleDateFormat.format(calendar.getTime());
         //Log.v("Naszmiesiacto ", month);
     }
+
 
 
 

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -19,8 +20,8 @@ import android.widget.TextView;
 import com.example.kuba.yourbills.Utilities.DBHelper;
 import com.example.kuba.yourbills.R;
 import com.example.kuba.yourbills.Models.Bill;
+import com.example.kuba.yourbills.Utilities.NotificationScheduler;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -29,7 +30,9 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import static android.app.Activity.RESULT_OK;
@@ -47,6 +50,9 @@ public class FragmentNewBill extends Fragment {
     public static int FRAGMENT_CODE = 1;
     public static String FRAGMENT_TAG = "New bill";
     private View v;
+    private AppCompatSpinner remindSpinner;
+    private TextView hourTextView;
+    private int notificationHour, notificationMinute;
 
     private DBHelper myDb;
 
@@ -106,8 +112,10 @@ public class FragmentNewBill extends Fragment {
                 else
                     amount = Float.valueOf(amountEditText.getEditableText().toString());
                 Bill newBill = new Bill(billTitleEditText.getEditableText().toString(), description.getEditableText().toString(),
-                        amount, date, false);
+                        amount, date, false, remindSpinner.getSelectedItem().toString() , myDb.getMaxIdFromBills()+1);
                 myDb.insertBill(newBill);
+                Log.v("daysBefore: ", remindSpinner.getSelectedItem().toString());
+                setNotification(newBill);
                 closeKeyboard();
                 sendBillToPreviousFragment(newBill);
                 Log.v("Dodalem", "Billa");
@@ -148,6 +156,21 @@ public class FragmentNewBill extends Fragment {
             }
         });
 
+        remindSpinner = view.findViewById(R.id.remind_spinner);
+        String[] remindSpinnerItems = {"1 day before", "2 days before", "3 days before", "1 week before"};
+        ArrayAdapter<String> remindSpinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, remindSpinnerItems);
+        remindSpinner.setAdapter(remindSpinnerAdapter);
+
+        hourTextView = view.findViewById(R.id.hour);
+        hourTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment newFragment = new TimePickerFragment();
+                newFragment.show(getActivity().getSupportFragmentManager(), TimePickerFragment.FRAGMENT_TAG);
+                newFragment.setTargetFragment(FragmentNewBill.this, TimePickerFragment.FRAGMENT_CODE);
+            }
+        });
+
 
     }
 
@@ -184,7 +207,7 @@ public class FragmentNewBill extends Fragment {
         this.date = calendar.getTime();
     }
 
-    //resets hour to calculate bill's deadline properly
+    //resets hourTextView to calculate bill's deadline properly
     private void resetTime(Calendar calendar){
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
@@ -218,5 +241,28 @@ public class FragmentNewBill extends Fragment {
         description.clearFocus();
     }
 
+
+    private void setNotification(Bill bill){
+        NotificationScheduler notificationScheduler = new NotificationScheduler(getContext());
+        notificationScheduler.scheduleNotificationWorker(bill);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode== TimePickerFragment.FRAGMENT_CODE){
+                int hour = (int)data.getSerializableExtra("hourTextView");
+                int minute = (int)data.getSerializableExtra("minute");
+                String zero = "";
+                if(minute<10)
+                    zero="0";
+                this.hourTextView.setText(hour + ":" + zero + minute);
+
+            }
+        }
+    }
 
 }

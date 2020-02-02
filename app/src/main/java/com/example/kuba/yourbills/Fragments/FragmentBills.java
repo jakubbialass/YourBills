@@ -219,11 +219,10 @@ public class FragmentBills extends Fragment {
         buttonRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                //scheduleNotificationWorker(billsListToShow.get(0));
-
-                NotificationScheduler notificationScheduler = new NotificationScheduler(getContext());
-                notificationScheduler.scheduleNotificationWorker(billsListToShow.get(0));
+                
+                //NotificationScheduler notificationScheduler = new NotificationScheduler(getContext());
+                //notificationScheduler.scheduleNotificationWorker(billsListToShow.get(0));
+                Log.v("maxId: ", Integer.toString(mydb.getMaxIdFromBills()));
 
 
             }
@@ -469,7 +468,6 @@ public class FragmentBills extends Fragment {
             if (requestCode==FragmentNewBill.FRAGMENT_CODE){
                 Bill bill = (Bill)data.getSerializableExtra("bill");
                 Log.v("znalazlem ", bill.getBillTitle());
-                bill = mydb.getLastBillWithTitle(bill);
                 billsList.add(bill);
                 billsListToShow = getMonthBillsList();
                 showBillsList();

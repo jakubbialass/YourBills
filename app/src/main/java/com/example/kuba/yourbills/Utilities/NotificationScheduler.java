@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.kuba.yourbills.Models.Bill;
+import com.example.kuba.yourbills.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,10 +27,23 @@ public class NotificationScheduler {
 
 
     public void scheduleNotificationWorker(Bill bill){
-        if (calculateNotificationDelay(bill, 14, 1) > 0) {
-            Data inputData = new Data.Builder().putInt(UploadWorker.NOTIFICATION_ID, 1).build();
+
+        Log.v("id_przy_tworzeniu_not", Integer.toString(bill.getDatabaseId()));
+
+        int daysBefore = 1;
+
+        if(bill.getNotificationTimeBefore().equals(context.getResources().getString(R.string.two_days_before)))
+            daysBefore = 2;
+        else if (bill.getNotificationTimeBefore().equals(context.getResources().getString(R.string.three_days_before)))
+            daysBefore = 3;
+        else if (bill.getNotificationTimeBefore().equals(context.getResources().getString(R.string.one_week_before)))
+            daysBefore = 7;
+
+        if (calculateNotificationDelay(bill, 10, daysBefore) > 0) {
+            Data inputData = new Data.Builder().putInt(UploadWorker.NOTIFICATION_ID, bill.getDatabaseId()).build();
             OneTimeWorkRequest notificationWork = new OneTimeWorkRequest.Builder(UploadWorker.class)
-                    .setInitialDelay(calculateNotificationDelay(bill, 14, 2), TimeUnit.MILLISECONDS)
+                    //.setInitialDelay(calculateNotificationDelay(bill, 10, daysBefore), TimeUnit.MILLISECONDS)
+                    .setInitialDelay(5000, TimeUnit.MILLISECONDS)
                     .setInputData(inputData)
                     .addTag("notification")
                     .build();

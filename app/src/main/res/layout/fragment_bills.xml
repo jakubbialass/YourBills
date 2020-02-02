@@ -39,7 +39,8 @@
             android:id="@+id/filter_selector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:spinnerMode="dropdown">
+            android:spinnerMode="dropdown"
+            android:overlapAnchor="false">
         </androidx.appcompat.widget.AppCompatSpinner>
 
         <CheckBox

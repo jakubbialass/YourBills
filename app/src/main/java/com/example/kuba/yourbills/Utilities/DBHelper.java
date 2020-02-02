@@ -17,7 +17,7 @@ import java.util.Date;
 public class DBHelper extends SQLiteOpenHelper {
 
 
-    public static final String DATABASE_NAME = "YourBillsDatabase5.db";
+    public static final String DATABASE_NAME = "YourBillsDatabase11.db";
     public static final String BILLS_TABLE_NAME = "bills";
 
 
@@ -29,7 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(
                 "create table bills " +
-                        "(id integer primary key, title TEXT,description TEXT,billAmount REAL,billDate INTEGER,paid INTEGER)"
+                        "(id integer primary key, title TEXT,description TEXT,billAmount REAL,billDate INTEGER, notificationTimeBefore TEXT, paid INTEGER)"
         );
     }
 
@@ -48,6 +48,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("billAmount", bill.getBillAmount());
         cv.put("billDate", bill.getBillDate().getTime());
         cv.put("paid", bill.isPaid()?1:0); //1 if true 0 if false
+        cv.put("notificationTimeBefore", bill.getNotificationTimeBefore());
         Log.v("sprawdzam date przed ", String.valueOf(bill.getBillDate().getTime()));
         db.insert("bills", null, cv);
         Log.v("wstawione " , "do bazy");
@@ -59,6 +60,22 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM bills WHERE id = " + bill.getDatabaseId());
         return true;
     }
+
+
+    public int getMaxIdFromBills(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery( "select * from bills WHERE id=(select MAX(id) from bills)", null );
+        int id = 1;
+        if(res!=null && res.getCount()>0) {
+            res.moveToFirst();
+            id = res.getInt(res.getColumnIndex("id"));
+        }
+        if (!res.isClosed())  {
+            res.close();
+        }
+        return id;
+    }
+
 
     public ArrayList<Bill> getBillsList(){
         ArrayList<Bill> tempBillsList = new ArrayList<>();
@@ -87,7 +104,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 resetTime(calendar);
                 Date billDate = calendar.getTime();
                 boolean paid = (rs.getInt(rs.getColumnIndex("paid"))) == 1;
-                Bill bill = new Bill(title, description, billAmount, billDate, paid, id);
+                String notificationTimeBefore = rs.getString(rs.getColumnIndex("notificationTimeBefore"));
+                Bill bill = new Bill(title, description, billAmount, billDate, paid, notificationTimeBefore, id);
                 tempBillsList.add(bill);
                 id++;
                 Log.v("billowy " + bill.getBillTitle(), " id " + bill.getDatabaseId());
@@ -119,6 +137,8 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res = db.rawQuery( "select * from bills where id=" + id + "", null );
         return res;
     }
+
+
 
     private void resetTime(Calendar calendar){
         calendar.set(Calendar.HOUR_OF_DAY, 23);
@@ -154,12 +174,43 @@ public class DBHelper extends SQLiteOpenHelper {
         String description = rs.getString(rs.getColumnIndex("description"));
         float billAmount = rs.getFloat(rs.getColumnIndex("billAmount"));
         long dateInMillis = rs.getLong(rs.getColumnIndex("billDate"));
+        String notificationTimeBefore = rs.getString(rs.getColumnIndex("notificationTimeBefore"));
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(dateInMillis);
         resetTime(calendar);
         Date billDate = calendar.getTime();
         boolean paid = (rs.getInt(rs.getColumnIndex("paid"))) == 1;
 
-        return new Bill(title, description, billAmount, billDate, paid, id);
+        return new Bill(title, description, billAmount, billDate, paid, notificationTimeBefore, id);
     }
+
+    public Bill getBillById(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor rs = db.rawQuery( "select * from bills WHERE id= " + id + "", null );
+        Bill bill = null;
+        if(rs!=null && rs.getCount()>0) {
+            rs.moveToFirst();
+            String title = rs.getString(rs.getColumnIndex("title"));
+            String description = rs.getString(rs.getColumnIndex("description"));
+            float billAmount = rs.getFloat(rs.getColumnIndex("billAmount"));
+            long dateInMillis = rs.getLong(rs.getColumnIndex("billDate"));
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(dateInMillis);
+            resetTime(calendar);
+            Date billDate = calendar.getTime();
+
+            boolean paid = (rs.getInt(rs.getColumnIndex("paid"))) == 1;
+            String notificationTimeBefore = rs.getString(rs.getColumnIndex("notificationTimeBefore"));
+            bill = new Bill(title, description, billAmount, billDate, paid, notificationTimeBefore, id);
+        }
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+        return bill;
+    }
+
+
+
+
 }

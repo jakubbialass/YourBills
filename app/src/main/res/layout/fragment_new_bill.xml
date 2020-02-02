@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/newBillLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#FAFAFA"
     android:clickable="true">
 
@@ -12,46 +13,48 @@
         android:id="@+id/text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textSize="46dp"
+        android:gravity="center"
         android:text="Add new Bill"
-        android:gravity="center">
+        android:textSize="46dp"
+        app:layout_constraintTop_toTopOf="parent">
     </TextView>
 
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/billTitle"
+        style="@style/TitleTextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        style="@style/TitleTextInputLayoutStyle"
         app:layout_constraintTop_toBottomOf="@+id/text_view">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/billTitleEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Title"
-            android:textSize="18sp"/>
+            android:hint="@string/title_hint"
+            android:textSize="18sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/description_input_layout"
+        style="@style/DescriptionTextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        style="@style/DescriptionTextInputLayout"
         app:layout_constraintTop_toBottomOf="@id/billTitle">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/billDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="top"
-            android:minLines="3"
-            android:maxLines="5"
             android:background="@null"
-            android:hint="@string/bill_description"
+            android:gravity="top"
+            android:hint="@string/description_hint"
             android:inputType="textMultiLine"
+            android:maxLines="5"
+            android:minLines="3"
             android:overScrollMode="always"
             android:scrollbarStyle="insideInset"
             android:scrollbars="vertical">
@@ -59,18 +62,17 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
-
     <TextView
         android:id="@+id/date_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/deadline"
         android:layout_marginLeft="22dp"
-        android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginBottom="20dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="@string/deadline_label"
         android:textSize="18sp"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/description_input_layout">
     </TextView>
 
@@ -78,35 +80,35 @@
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/date_label"
-        app:layout_constraintLeft_toRightOf="@+id/date_label"
         android:layout_marginLeft="5dp"
+        android:text="Mon, 29.11.2019"
+        android:textColor="@color/pickerColor"
+        android:textStyle="bold"
         android:textSize="18sp"
-        android:textColor="#0D47A1"
-        android:text="Mon, 29.11.2019">
+        app:layout_constraintBottom_toBottomOf="@+id/date_label"
+        app:layout_constraintLeft_toRightOf="@+id/date_label">
     </TextView>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/amount_input_layout"
+        style="@style/EditableTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:minWidth="500dp"
-        android:hint="@string/bill_amount"
-        style="@style/EditableTextInputLayout"
-        app:endIconMode="clear_text"
-        android:layout_marginRight="20dp"
         android:layout_marginLeft="15dp"
+        android:layout_marginRight="20dp"
+        android:hint="@string/amount_hint"
+        android:minWidth="500dp"
+        app:endIconMode="clear_text"
         app:layout_constraintBottom_toBottomOf="@+id/date"
         app:layout_constraintLeft_toRightOf="@+id/date"
-        app:layout_constraintTop_toTopOf="@+id/date"
         app:layout_constraintRight_toRightOf="parent"
-        >
+        app:layout_constraintTop_toTopOf="@+id/date">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/billAmount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            />
+            android:inputType="numberDecimal" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -114,31 +116,65 @@
         android:id="@+id/advanced_section"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/date_label"
-        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="30dp"
-        android:textSize="18sp"
+        android:text="@string/advanced_section"
         android:textColor="#000000"
-        android:text="Advanced section">
+        android:textSize="18sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_label">
     </TextView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/advanced_section"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/advanced_section">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_marginLeft="22dp"
-            android:layout_marginTop="5dp"
-            android:text="Remind:"
-            android:textSize="18sp">
-        </TextView>
+            android:layout_marginTop="11dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/remind_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/remind_label"
+                android:textSize="18sp">
+            </TextView>
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/remind_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:overlapAnchor="false"
+                android:spinnerMode="dropdown">
+            </androidx.appcompat.widget.AppCompatSpinner>
+
+            <TextView
+                android:id="@+id/hour_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hour_label"
+                android:textSize="18sp">
+            </TextView>
+
+            <TextView
+                android:id="@+id/hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="10:00"
+                android:textColor="@color/pickerColor">
+            </TextView>
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -149,8 +185,7 @@
         android:layout_margin="20dp"
         android:text="Add new bill"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        >
+        app:layout_constraintRight_toRightOf="parent">
     </Button>
 
     <Button
@@ -160,12 +195,8 @@
         android:layout_margin="20dp"
         android:text="cancel"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/button_add_new_bill"
-        >
+        app:layout_constraintRight_toLeftOf="@id/button_add_new_bill">
     </Button>
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
