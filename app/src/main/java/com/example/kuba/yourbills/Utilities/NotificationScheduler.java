@@ -39,11 +39,11 @@ public class NotificationScheduler {
         else if (bill.getNotificationTimeBefore().equals(context.getResources().getString(R.string.one_week_before)))
             daysBefore = 7;
 
-        if (calculateNotificationDelay(bill, 10, daysBefore) > 0) {
+        if (calculateNotificationDelay(bill, daysBefore) > 0) {
             Data inputData = new Data.Builder().putInt(UploadWorker.NOTIFICATION_ID, bill.getDatabaseId()).build();
             OneTimeWorkRequest notificationWork = new OneTimeWorkRequest.Builder(UploadWorker.class)
-                    //.setInitialDelay(calculateNotificationDelay(bill, 10, daysBefore), TimeUnit.MILLISECONDS)
-                    .setInitialDelay(5000, TimeUnit.MILLISECONDS)
+                    .setInitialDelay(calculateNotificationDelay(bill, daysBefore), TimeUnit.MILLISECONDS)
+                    //.setInitialDelay(5000, TimeUnit.MILLISECONDS)
                     .setInputData(inputData)
                     .addTag("notification")
                     .build();
@@ -62,7 +62,7 @@ public class NotificationScheduler {
     }
 
 
-    private long calculateNotificationDelay(Bill bill, int notificationHour, int notificationDaysBeforePayment){
+    private long calculateNotificationDelay(Bill bill, int notificationDaysBeforePayment){
         long oneDayInMillis = 24*60*60*1000;
 
         Date billDate = bill.getBillDate();
@@ -70,7 +70,7 @@ public class NotificationScheduler {
         Calendar calendar = simpleDateFormat.getCalendar();
         simpleDateFormat.format(new Date());
         calendar.setTime(billDate);
-        setNotificationHour(calendar, notificationHour);
+        setNotificationTime(calendar, bill.getNotificationHour(), bill.getNotificationMinute());
 
         long notificationTimeInMillis = calendar.getTimeInMillis() - (notificationDaysBeforePayment * oneDayInMillis);
         long delay = notificationTimeInMillis-getCurrentTimeInMillis();
@@ -81,12 +81,12 @@ public class NotificationScheduler {
         //Log.v("today_bill ", Long.toString(bill.getBillDate().getTime()));
 
         //return delay;
-        return 5000;
+        return delay;
     }
 
-    private void setNotificationHour(Calendar calendar, int notificationHour){
+    private void setNotificationTime(Calendar calendar, int notificationHour, int notificatonMinute){
         calendar.set(Calendar.HOUR_OF_DAY, notificationHour);
-        calendar.set(Calendar.MINUTE, 6);
+        calendar.set(Calendar.MINUTE, notificatonMinute);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
     }

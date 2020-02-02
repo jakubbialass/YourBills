@@ -41,6 +41,7 @@ public class UploadWorker extends Worker {
         myDb = new DBHelper(getApplicationContext());
         Bill bill = myDb.getBillById(id);
 
+        Log.v("notification_jakieid ", Integer.toString(id));
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
                 .setSmallIcon(R.drawable.ic_launcher_background)
@@ -50,7 +51,7 @@ public class UploadWorker extends Worker {
         Notification notification = builder.build();
 
 
-        Log.v("notification_jakieid ", Integer.toString(id));
+        //Log.v("notification_jakieid ", Integer.toString(id));
         notificationManager.notify(id, notification);
     }
 

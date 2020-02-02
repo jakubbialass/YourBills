@@ -112,7 +112,9 @@ public class FragmentNewBill extends Fragment {
                 else
                     amount = Float.valueOf(amountEditText.getEditableText().toString());
                 Bill newBill = new Bill(billTitleEditText.getEditableText().toString(), description.getEditableText().toString(),
-                        amount, date, false, remindSpinner.getSelectedItem().toString() , myDb.getMaxIdFromBills()+1);
+                        amount, date, false,
+                        remindSpinner.getSelectedItem().toString(), notificationHour, notificationMinute,
+                        myDb.getMaxIdFromBills()+1);
                 myDb.insertBill(newBill);
                 Log.v("daysBefore: ", remindSpinner.getSelectedItem().toString());
                 setNotification(newBill);
@@ -254,15 +256,20 @@ public class FragmentNewBill extends Fragment {
 
         if (resultCode == RESULT_OK) {
             if (requestCode== TimePickerFragment.FRAGMENT_CODE){
-                int hour = (int)data.getSerializableExtra("hourTextView");
-                int minute = (int)data.getSerializableExtra("minute");
+                int hour = notificationHour = (int)data.getSerializableExtra("hour");
+                int minute = notificationMinute = (int)data.getSerializableExtra("minute");
                 String zero = "";
                 if(minute<10)
                     zero="0";
-                this.hourTextView.setText(hour + ":" + zero + minute);
 
+                this.hourTextView.setText(hour + ":" + zero + minute);
             }
         }
     }
+
+
+
+
+
 
 }

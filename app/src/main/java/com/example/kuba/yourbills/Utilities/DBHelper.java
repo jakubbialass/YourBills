@@ -17,7 +17,7 @@ import java.util.Date;
 public class DBHelper extends SQLiteOpenHelper {
 
 
-    public static final String DATABASE_NAME = "YourBillsDatabase11.db";
+    public static final String DATABASE_NAME = "YourBillsDatabase12.db";
     public static final String BILLS_TABLE_NAME = "bills";
 
 
@@ -29,7 +29,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(
                 "create table bills " +
-                        "(id integer primary key, title TEXT,description TEXT,billAmount REAL,billDate INTEGER, notificationTimeBefore TEXT, paid INTEGER)"
+                        "(id integer primary key, title TEXT,description TEXT,billAmount REAL,billDate INTEGER," +
+                        " notificationTimeBefore TEXT, notificationHour INTEGER, notificationMinute INTEGER, paid INTEGER)"
         );
     }
 
@@ -65,7 +66,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public int getMaxIdFromBills(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery( "select * from bills WHERE id=(select MAX(id) from bills)", null );
-        int id = 1;
+        int id = 0;
         if(res!=null && res.getCount()>0) {
             res.moveToFirst();
             id = res.getInt(res.getColumnIndex("id"));
@@ -98,14 +99,20 @@ public class DBHelper extends SQLiteOpenHelper {
                 String description = rs.getString(rs.getColumnIndex("description"));
                 float billAmount = rs.getFloat(rs.getColumnIndex("billAmount"));
                 long dateInMillis = rs.getLong(rs.getColumnIndex("billDate"));
-                //Log.v("sprawdzam date po ", String.valueOf(dateInMillis));
+                int notificationHour = rs.getInt(rs.getColumnIndex("notificationHour"));
+                int notificationMinute = rs.getInt(rs.getColumnIndex("notificationMinute"));
+
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(dateInMillis);
                 resetTime(calendar);
                 Date billDate = calendar.getTime();
                 boolean paid = (rs.getInt(rs.getColumnIndex("paid"))) == 1;
                 String notificationTimeBefore = rs.getString(rs.getColumnIndex("notificationTimeBefore"));
-                Bill bill = new Bill(title, description, billAmount, billDate, paid, notificationTimeBefore, id);
+
+                Bill bill = new Bill(title, description, billAmount, billDate, paid,
+                        notificationTimeBefore, notificationHour, notificationMinute,
+                        id);
+
                 tempBillsList.add(bill);
                 id++;
                 Log.v("billowy " + bill.getBillTitle(), " id " + bill.getDatabaseId());
@@ -175,13 +182,18 @@ public class DBHelper extends SQLiteOpenHelper {
         float billAmount = rs.getFloat(rs.getColumnIndex("billAmount"));
         long dateInMillis = rs.getLong(rs.getColumnIndex("billDate"));
         String notificationTimeBefore = rs.getString(rs.getColumnIndex("notificationTimeBefore"));
+        int notificationHour = rs.getInt(rs.getColumnIndex("notificationHour"));
+        int notificationMinute = rs.getInt(rs.getColumnIndex("notificationMinute"));
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(dateInMillis);
         resetTime(calendar);
         Date billDate = calendar.getTime();
         boolean paid = (rs.getInt(rs.getColumnIndex("paid"))) == 1;
 
-        return new Bill(title, description, billAmount, billDate, paid, notificationTimeBefore, id);
+        return new Bill(title, description, billAmount, billDate, paid,
+                notificationTimeBefore, notificationHour, notificationMinute,
+                id);
     }
 
     public Bill getBillById(int id){
@@ -194,6 +206,8 @@ public class DBHelper extends SQLiteOpenHelper {
             String description = rs.getString(rs.getColumnIndex("description"));
             float billAmount = rs.getFloat(rs.getColumnIndex("billAmount"));
             long dateInMillis = rs.getLong(rs.getColumnIndex("billDate"));
+            int notificationHour = rs.getInt(rs.getColumnIndex("notificationHour"));
+            int notificationMinute = rs.getInt(rs.getColumnIndex("notificationMinute"));
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(dateInMillis);
@@ -202,7 +216,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
             boolean paid = (rs.getInt(rs.getColumnIndex("paid"))) == 1;
             String notificationTimeBefore = rs.getString(rs.getColumnIndex("notificationTimeBefore"));
-            bill = new Bill(title, description, billAmount, billDate, paid, notificationTimeBefore, id);
+            bill = new Bill(title, description, billAmount, billDate, paid,
+                    notificationTimeBefore, notificationHour, notificationMinute,
+                    id);
         }
         if (!rs.isClosed()) {
             rs.close();

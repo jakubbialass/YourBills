@@ -219,7 +219,7 @@ public class FragmentBills extends Fragment {
         buttonRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
+
                 //NotificationScheduler notificationScheduler = new NotificationScheduler(getContext());
                 //notificationScheduler.scheduleNotificationWorker(billsListToShow.get(0));
                 Log.v("maxId: ", Integer.toString(mydb.getMaxIdFromBills()));

@@ -22,24 +22,16 @@ public class Bill implements Serializable {
     private String month;
     private int id;
     private String notificationTimeBefore;
+    private int notificationHour, notificationMinute;
 
     public enum SortCategory {TITLE, AMOUNT, DEADLINE};
 
 
-    public Bill(String billTitle, String billDescription, float billAmount, Date date, boolean paid){
-        this.billTitle = billTitle;
-        this.billDescription = billDescription;
-        this.billAmount = billAmount;
-        //this.paid = false;
-        //Calendar calendar = Calendar.getInstance();
-        //this.date = calendar.getTime();
-        this.billDate = date;
-        this.paid = paid;
-        this.daysLeft = setDaysLeft(this);
-        setMonth();
-    }
 
-    public Bill(String billTitle, String billDescription, float billAmount, Date date, boolean paid, String notificationTimeBefore, int id){
+
+    public Bill(String billTitle, String billDescription, float billAmount, Date date, boolean paid,
+                String notificationTimeBefore, int notificationHour, int notificationMinute,
+                int id){
         this.billTitle = billTitle;
         this.billDescription = billDescription;
         this.billAmount = billAmount;
@@ -51,6 +43,8 @@ public class Bill implements Serializable {
         this.paid = paid;
         this.daysLeft = setDaysLeft(this);
         this.notificationTimeBefore = notificationTimeBefore;
+        this.notificationHour = notificationHour;
+        this.notificationMinute = notificationMinute;
         setMonth();
     }
 
@@ -170,6 +164,22 @@ public class Bill implements Serializable {
 
     public String getNotificationTimeBefore(){
         return this.notificationTimeBefore;
+    }
+
+    public int getNotificationHour() {
+        return notificationHour;
+    }
+
+    public void setNotificationHour(int notificationHour) {
+        this.notificationHour = notificationHour;
+    }
+
+    public int getNotificationMinute() {
+        return notificationMinute;
+    }
+
+    public void setNotificationMinute(int notificationMinute) {
+        this.notificationMinute = notificationMinute;
     }
 
     private void setMonth(){
