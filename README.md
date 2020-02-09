@@ -11,7 +11,7 @@ Steps of developmnet:
 7. Add swipe gestures to RecyclerView items
 8. Customize swipes and set actions to buttons which show up after swiping
 9. Add animations to switching month, changing fragments, sliding down filters pannel
-10. Add notifications to remind about coming bills (achieved but struggling with little problem
+10. Add notifications to remind about comming bills (achieved but struggling with little problem
 https://stackoverflow.com/questions/59933683/how-to-schedule-notification-for-a-specific-time )
 
 -------- I'm here now --------
