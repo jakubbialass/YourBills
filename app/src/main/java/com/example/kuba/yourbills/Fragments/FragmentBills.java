@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.app.AlarmManager;
+import android.app.DatePickerDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -224,7 +225,7 @@ public class FragmentBills extends Fragment {
 
                 //NotificationScheduler notificationScheduler = new NotificationScheduler(getContext());
                 //notificationScheduler.scheduleNotificationWorker(billsListToShow.get(0));
-                Log.v("maxId: ", Integer.toString(mydb.getMaxIdFromBills()));
+
 
 
             }

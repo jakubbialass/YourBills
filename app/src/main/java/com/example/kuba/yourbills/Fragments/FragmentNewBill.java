@@ -167,8 +167,8 @@ public class FragmentNewBill extends Fragment {
             @TargetApi(24)
             public void onClick(View view) {
                 closeKeyboard();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(view.getContext());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(view.getContext().getApplicationContext());
                     datePickerDialog.getDatePicker().setFirstDayOfWeek(2);
                     datePickerDialog.show();
                     datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
@@ -180,6 +180,7 @@ public class FragmentNewBill extends Fragment {
                     });
                 }
                 else{
+                    Log.v("entering", "<N");
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(date);
                     DatePickerDialog datePickerDialog = new DatePickerDialog(view.getContext(),
@@ -188,7 +189,9 @@ public class FragmentNewBill extends Fragment {
                             calendar.get(Calendar.YEAR),
                             calendar.get(Calendar.MONTH),
                             calendar.get(Calendar.DAY_OF_MONTH));
-                    datePickerDialog.getDatePicker().setFirstDayOfWeek(2);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        datePickerDialog.getDatePicker().setFirstDayOfWeek(2);
+                    }
                     datePickerDialog.show();
                 }
             }
