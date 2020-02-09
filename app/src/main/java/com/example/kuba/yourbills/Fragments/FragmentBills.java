@@ -132,7 +132,7 @@ public class FragmentBills extends Fragment {
                 return true;
             }
         };
-        swipeController = new SwipeController(getContext(), new SwipeControllerActions() {
+        swipeController = new SwipeController(getActivity(), getContext(), new SwipeControllerActions() {
             @Override
             public void onRightDeleteClicked(int position) {
                 Bill billToRemove = billsListToShow.get(position);

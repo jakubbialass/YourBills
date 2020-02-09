@@ -66,6 +66,7 @@ public class BillsListAdapter extends RecyclerView.Adapter<BillsListAdapter.Bill
         holder.billAmount.setText(String.valueOf(bill.getBillAmount()));
        // holder.billDaysLeft.setText(String.valueOf(getDaysLeft(bill)));
         holder.billDaysLeft.setText(deadlineToString(holder, bill));
+        holder.billDescription.setText(bill.getBillDescription());
     }
 
     @Override

@@ -168,7 +168,7 @@ public class FragmentNewBill extends Fragment {
             public void onClick(View view) {
                 closeKeyboard();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(view.getContext().getApplicationContext());
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(view.getContext());
                     datePickerDialog.getDatePicker().setFirstDayOfWeek(2);
                     datePickerDialog.show();
                     datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
@@ -228,7 +228,7 @@ public class FragmentNewBill extends Fragment {
     }
 
     private String getTodaysDate(){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE, dd.MM.yyyy", Locale.getDefault());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
         String todaysDate = simpleDateFormat.format(new Date());
         Calendar calendar = simpleDateFormat.getCalendar();
         //resetTime(calendar);

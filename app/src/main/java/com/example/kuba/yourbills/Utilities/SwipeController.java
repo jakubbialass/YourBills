@@ -1,6 +1,7 @@
 package com.example.kuba.yourbills.Utilities;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -8,8 +9,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.RectF;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -34,7 +38,7 @@ public class SwipeController extends ItemTouchHelper.Callback {
 
     private boolean swipeBack = false;
     private ButtonsState buttonShowedState = ButtonsState.GONE;
-    private static final float buttonWidth = 250;
+    private float buttonWidth = 250;
     private RectF buttonInstance = null;
     private RectF buttonPaidInstance = null;
     private RecyclerView.ViewHolder currentItemViewHolder = null;
@@ -44,10 +48,19 @@ public class SwipeController extends ItemTouchHelper.Callback {
     private SwipeControllerActions buttonsActions;
     private float savedTouchDownDx = 0;
     private float savedTouchDownDy = 0;
+    private int displayWidth;
+    private float dpiMultiplier;
 
-    public SwipeController(Context mContext, SwipeControllerActions buttonsActions){
+    public SwipeController(Activity mActivity, Context mContext, SwipeControllerActions buttonsActions){
         this.mContext = mContext;
         this.buttonsActions = buttonsActions;
+
+        DisplayMetrics dm = new DisplayMetrics();
+        mActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        displayWidth = dm.widthPixels;
+        buttonWidth = displayWidth/5;
+        dpiMultiplier = mContext.getResources().getDisplayMetrics().density;
+        Log.v("dpiMultiplier ", Float.toString(dpiMultiplier));
     }
 
     @Override
@@ -62,7 +75,6 @@ public class SwipeController extends ItemTouchHelper.Callback {
 
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
     }
 
     @Override
@@ -122,7 +134,7 @@ public class SwipeController extends ItemTouchHelper.Callback {
                 //Log.v("pokazujeAktualny ", Float.toString(dX));
                 swipeBack = event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP;
                 if(swipeBack){
-                    if (dX < -buttonWidth*2)
+                    if (dX < -buttonWidth)
                         buttonShowedState = ButtonsState.RIGHT_VISIBLE;
                     else if (dX > buttonWidth)
                         buttonShowedState  = ButtonsState.LEFT_VISIBLE;
@@ -278,18 +290,20 @@ public class SwipeController extends ItemTouchHelper.Callback {
         float textWidth = p.measureText(text);
         c.drawText(text, button.centerX()-(textWidth/2), button.centerY()+(textSize/2), p);
 */
+        float iconShift =  24*dpiMultiplier;
+
         Resources res = mContext.getResources();
         if(icon.equals("edit")) {
             Bitmap bitmap = BitmapFactory.decodeResource(res, R.drawable.ic_mode_edit);
-            c.drawBitmap(bitmap, button.centerX() - 60, button.centerY() - 60, p);
+            c.drawBitmap(bitmap, button.centerX() - iconShift, button.centerY() - iconShift, p);
         }
         else if(icon.equals("delete")){
             Bitmap bitmap = BitmapFactory.decodeResource(res, R.drawable.ic_delete_forever);
-            c.drawBitmap(bitmap, button.centerX() - 60, button.centerY() - 60, p);
+            c.drawBitmap(bitmap, button.centerX() - iconShift, button.centerY() - iconShift, p);
         }
         else if(icon.equals("pay")){
             Bitmap bitmap = BitmapFactory.decodeResource(res, R.drawable.ic_payment);
-            c.drawBitmap(bitmap, button.centerX() - 60, button.centerY() - 60, p);
+            c.drawBitmap(bitmap, button.centerX() - iconShift, button.centerY() - iconShift, p);
         }
 
 
