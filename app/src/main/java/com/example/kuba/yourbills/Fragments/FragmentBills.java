@@ -1,5 +1,6 @@
 package com.example.kuba.yourbills.Fragments;
 
+import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.app.AlarmManager;
@@ -90,6 +91,8 @@ public class FragmentBills extends Fragment {
 
     private View fragmentBillsView;
     private RecyclerView.SimpleOnItemTouchListener recyclerTouchConsumer;
+
+    ObjectAnimator rotateDownHide, rotateDownShow, rotateUpHide, rotateUpShow;
 
     public static String FRAGMENT_TAG = "Bills";
 
@@ -209,7 +212,6 @@ public class FragmentBills extends Fragment {
                 swipeController.onDraw(c);
             }
         });
-
 
 
 
@@ -345,6 +347,59 @@ public class FragmentBills extends Fragment {
 
             }
         });
+        rotateDownHide= (ObjectAnimator) AnimatorInflater.loadAnimator(getContext(),R.animator.rotate_down_hide_animator);
+        rotateDownShow= (ObjectAnimator) AnimatorInflater.loadAnimator(getContext(),R.animator.rotate_down_show_animator);
+        rotateDownHide.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                Log.v("animation_", "start");
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                nameMonthToDisplay.setText(monthName);
+                Log.v("animation_", "end");
+                rotateDownShow.setTarget(nameMonthToDisplay);
+                rotateDownShow.start();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+                Log.v("animation_", "cancel");
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+                Log.v("animation_", "repeat");
+            }
+        });
+        rotateUpHide= (ObjectAnimator) AnimatorInflater.loadAnimator(getContext(),R.animator.rotate_up_hide_animator);
+        rotateUpShow= (ObjectAnimator) AnimatorInflater.loadAnimator(getContext(),R.animator.rotate_up_show_animator);
+        rotateUpHide.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                Log.v("animation_", "start");
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                nameMonthToDisplay.setText(monthName);
+                Log.v("animation_", "end");
+                rotateUpShow.setTarget(nameMonthToDisplay);
+                rotateUpShow.start();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+                Log.v("animation_", "cancel");
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+                Log.v("animation_", "repeat");
+            }
+        });
+
     }
 
 
@@ -375,59 +430,37 @@ public class FragmentBills extends Fragment {
     }
 
     private void oneMonthForward(){
+
+        if(rotateUpHide.isRunning()){
+            rotateUpHide.end();
+        }
+
         calendarMonthToDisplay.add(Calendar.MONTH, 1);
         monthName = monthDateFormat.format(calendarMonthToDisplay.getTime());
 
-        ObjectAnimator rotateUpHide= (ObjectAnimator) AnimatorInflater.loadAnimator(getContext(),R.animator.rotate_up_hide_animator);
-        ObjectAnimator rotateUpShow= (ObjectAnimator) AnimatorInflater.loadAnimator(getContext(),R.animator.rotate_up_show_animator);
         rotateUpHide.setTarget(nameMonthToDisplay);
         rotateUpHide.start();
-
-        Thread thread = new Thread(){
-            public void run(){
-                try {
-                    Thread.sleep(getContext().getResources().getInteger(R.integer.month_name_rotate_time));
-                    nameMonthToDisplay.setText(monthName);
-                } catch(InterruptedException e){}
-            }
-        };
-        thread.start();
-
-        rotateUpShow.setStartDelay(getContext().getResources().getInteger(R.integer.month_name_rotate_time));
-        rotateUpShow.setTarget(nameMonthToDisplay);
-        rotateUpShow.start();
 
         billsListToShow = getMonthBillsList();
         showBillsList();
     }
 
     private void oneMonthBackward(){
+
+        if(rotateDownHide.isRunning()){
+            rotateDownHide.end();
+        }
+
         calendarMonthToDisplay.add(Calendar.MONTH, -1);
         monthName = monthDateFormat.format(calendarMonthToDisplay.getTime());
-
-        ObjectAnimator rotateDownHide= (ObjectAnimator) AnimatorInflater.loadAnimator(getContext(),R.animator.rotate_down_hide_animator);
-        ObjectAnimator rotateDownShow= (ObjectAnimator) AnimatorInflater.loadAnimator(getContext(),R.animator.rotate_down_show_animator);
 
         rotateDownHide.setTarget(nameMonthToDisplay);
         rotateDownHide.start();
 
-        Thread thread = new Thread(){
-            public void run(){
-                try {
-                    Thread.sleep(getContext().getResources().getInteger(R.integer.month_name_rotate_time));
-                    nameMonthToDisplay.setText(monthName);
-                } catch(InterruptedException e){}
-            }
-        };
-        thread.start();
-
-        rotateDownShow.setStartDelay(getContext().getResources().getInteger(R.integer.month_name_rotate_time));
-        rotateDownShow.setTarget(nameMonthToDisplay);
-        rotateDownShow.start();
-
         billsListToShow = getMonthBillsList();
         showBillsList();
     }
+
 
     private ArrayList<Bill> getMonthBillsList(){
         ArrayList<Bill> tempMonthBillList = new ArrayList<>();

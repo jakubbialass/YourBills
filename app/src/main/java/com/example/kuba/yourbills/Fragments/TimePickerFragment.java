@@ -30,7 +30,7 @@ public class TimePickerFragment extends DialogFragment
 
         // Create a new instance of TimePickerDialog and return it
 
-        return new TimePickerDialog(getActivity(), R.style.Theme_AppCompat_DayNight_Dialog_Alert,this, hour, minute,
+        return new TimePickerDialog(getActivity(),this, hour, minute,
                 DateFormat.is24HourFormat(getActivity()));
     }
 

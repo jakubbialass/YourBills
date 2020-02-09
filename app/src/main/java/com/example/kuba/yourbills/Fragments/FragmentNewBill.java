@@ -6,10 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -39,10 +42,12 @@ import static android.app.Activity.RESULT_OK;
 
 public class FragmentNewBill extends Fragment {
 
-    private Button buttonAddNewBill, buttonCancel;
+    private TextView exitTextView, saveTextView;
+
     private EditText description;//, amount;
 
-    private TextInputEditText amountEditText, billTitleEditText;
+    private TextInputEditText amountEditText;//, billTitleEditText;
+    private EditText billTitleEditText;
 
     private TextView dateTextView;
     private Date date;
@@ -77,10 +82,41 @@ public class FragmentNewBill extends Fragment {
 
 
     private void init(View view){
-        buttonAddNewBill = view.findViewById(R.id.button_add_new_bill);
-        buttonCancel = view.findViewById(R.id.button_cancel_new_bill);
+        exitTextView = view.findViewById(R.id.exit_new_bill);
+        saveTextView = view.findViewById(R.id.save_bill);
         billTitleEditText = view.findViewById(R.id.billTitleEditText);
+
+        billTitleEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
+        billTitleEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    Log.v("klawiatura ", "ogarnalem");
+                    billTitleEditText.clearFocus();
+                    closeKeyboard();
+                    handled = true;
+                }
+                return handled;
+
+            }
+        });
         description = view.findViewById(R.id.billDescription);
+        description.setRawInputType(InputType.TYPE_CLASS_TEXT);
+        description.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    Log.v("klawiatura ", "ogarnalem");
+                    description.clearFocus();
+                    closeKeyboard();
+                    handled = true;
+                }
+                return handled;
+
+            }
+        });
         amountEditText = view.findViewById(R.id.billAmount);
 
         newBillLayout = view.findViewById(R.id.newBillLayout);
@@ -94,7 +130,7 @@ public class FragmentNewBill extends Fragment {
 
         myDb = new DBHelper(view.getContext());
 
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
+        exitTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 closeKeyboard();
@@ -103,7 +139,7 @@ public class FragmentNewBill extends Fragment {
             }
         });
 
-        buttonAddNewBill.setOnClickListener(new View.OnClickListener() {
+        saveTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 float amount;
