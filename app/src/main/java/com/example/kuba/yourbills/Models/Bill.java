@@ -1,6 +1,7 @@
 package com.example.kuba.yourbills.Models;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.kuba.yourbills.R;
 
@@ -23,6 +24,7 @@ public class Bill implements Serializable {
     private int id;
     private String notificationTimeBefore;
     private int notificationHour, notificationMinute;
+    private int childId; // 0 = no child
 
     public enum SortCategory {TITLE, AMOUNT, DEADLINE};
 
@@ -31,7 +33,7 @@ public class Bill implements Serializable {
 
     public Bill(String billTitle, String billDescription, float billAmount, Date date, boolean paid,
                 String notificationTimeBefore, int notificationHour, int notificationMinute,
-                int id){
+                int id, int childId){
         this.billTitle = billTitle;
         this.billDescription = billDescription;
         this.billAmount = billAmount;
@@ -45,6 +47,7 @@ public class Bill implements Serializable {
         this.notificationTimeBefore = notificationTimeBefore;
         this.notificationHour = notificationHour;
         this.notificationMinute = notificationMinute;
+        this.childId = childId;
         setMonth();
     }
 
@@ -104,8 +107,13 @@ public class Bill implements Serializable {
         simpleDateFormat.format(new Date()); // totalnie nie wiem po chuj trzeba to wywolac, ale bez tego ucina 10 dni, wtf
         //Log.v("ktorydzisiaj ", todaysDate);
         Date today = calendar.getTime();
+        //Log.v("datex_", bill.getBillTitle() + " " + getBillDate().toString());
+        //Log.v("datex_", "TODAY " + today.toString());
         long diff = bill.getBillDate().getTime() - today.getTime();
-        int days = (int)diff/1000/60/60/24;
+        //Log.v("datex_", "diff " + diff);
+        long daysInLong = diff/1000/60/60/24;
+        int days = (int)daysInLong;
+        //Log.v("datex_", "DAYS " + days);
         return days;
     }
 
@@ -146,9 +154,10 @@ public class Bill implements Serializable {
         this.paid = paid;
     }
 
-    public int getDatabaseId(){
+    public int getId(){
         return id;
     }
+
 
     public Date getBillDate() {
         return billDate;
@@ -190,14 +199,11 @@ public class Bill implements Serializable {
         //Log.v("Naszmiesiacto ", month);
     }
 
+    public int getChildId() {
+        return childId;
+    }
 
-
-
-
-
-
-
-
-
-
+    public void setChildId(int childId) {
+        this.childId = childId;
+    }
 }

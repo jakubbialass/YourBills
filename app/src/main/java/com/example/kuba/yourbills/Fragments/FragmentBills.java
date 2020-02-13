@@ -3,10 +3,6 @@ package com.example.kuba.yourbills.Fragments;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
-import android.app.AlarmManager;
-import android.app.DatePickerDialog;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -32,11 +28,8 @@ import com.example.kuba.yourbills.Adapters.BillsListAdapter;
 import com.example.kuba.yourbills.Utilities.DBHelper;
 import com.example.kuba.yourbills.R;
 import com.example.kuba.yourbills.Models.Bill;
-import com.example.kuba.yourbills.Unused.NotificationPublisher;
-import com.example.kuba.yourbills.Utilities.NotificationScheduler;
 import com.example.kuba.yourbills.Utilities.SwipeController;
 import com.example.kuba.yourbills.Utilities.SwipeControllerActions;
-import com.example.kuba.yourbills.Utilities.UploadWorker;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,23 +37,18 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.AnimRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -153,7 +141,7 @@ public class FragmentBills extends Fragment {
                 mydb.updatePaidData(bill);
 
                 for(int i=0; i<billsList.size(); i++){
-                    if(billsList.get(i).getDatabaseId() == bill.getDatabaseId())
+                    if(billsList.get(i).getId() == bill.getId())
                         billsList.get(i).setPaid(bill.isPaid());
                 }
                 mAdapter.notifyDataSetChanged();
@@ -500,9 +488,15 @@ public class FragmentBills extends Fragment {
 
         if (resultCode == RESULT_OK) {
             if (requestCode==FragmentNewBill.FRAGMENT_CODE){
-                Bill bill = (Bill)data.getSerializableExtra("bill");
+                /*Bill bill = (Bill)data.getSerializableExtra("bill");
                 Log.v("znalazlem ", bill.getBillTitle());
                 billsList.add(bill);
+                billsListToShow = getMonthBillsList();
+                showBillsList();*/
+
+                ArrayList<Bill> newBillsList = (ArrayList<Bill>)data.getSerializableExtra("newBillsList");
+                for (Bill bill : newBillsList)
+                    billsList.add(bill);
                 billsListToShow = getMonthBillsList();
                 showBillsList();
             }

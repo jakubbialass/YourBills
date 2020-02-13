@@ -26,4 +26,16 @@
     <string name="advanced_section">Advanced section</string>
     <string name="remind_label">Remind:</string>
     <string name="hour_label">Hour:</string>
+    <string name="repeat_label">Repeat every:</string>
+    <string name="repeat_day">day</string>
+    <string name="repeat_week">week</string>
+    <string name="repeat_month">month</string>
+    <string name="repeat_year">year</string>
+    <string name="repeat_days">days</string>
+    <string name="repeat_weeks">weeks</string>
+    <string name="repeat_months">months</string>
+    <string name="repeat_years">years</string>
+    <string name="repeat_end">Repeat end:</string>
+
+
 </resources>

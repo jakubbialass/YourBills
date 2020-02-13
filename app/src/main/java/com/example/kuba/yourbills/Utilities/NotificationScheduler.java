@@ -28,7 +28,7 @@ public class NotificationScheduler {
 
     public void scheduleNotificationWorker(Bill bill){
 
-        Log.v("id_przy_tworzeniu_not", Integer.toString(bill.getDatabaseId()));
+        Log.v("id_przy_tworzeniu_not", Integer.toString(bill.getId()));
 
         int daysBefore = 1;
 
@@ -40,7 +40,7 @@ public class NotificationScheduler {
             daysBefore = 7;
 
         if (calculateNotificationDelay(bill, daysBefore) > 0) {
-            Data inputData = new Data.Builder().putInt(UploadWorker.NOTIFICATION_ID, bill.getDatabaseId()).build();
+            Data inputData = new Data.Builder().putInt(UploadWorker.NOTIFICATION_ID, bill.getId()).build();
             OneTimeWorkRequest notificationWork = new OneTimeWorkRequest.Builder(UploadWorker.class)
                     .setInitialDelay(calculateNotificationDelay(bill, daysBefore), TimeUnit.MILLISECONDS)
                     //.setInitialDelay(5000, TimeUnit.MILLISECONDS)
@@ -84,9 +84,9 @@ public class NotificationScheduler {
         return delay;
     }
 
-    private void setNotificationTime(Calendar calendar, int notificationHour, int notificatonMinute){
+    private void setNotificationTime(Calendar calendar, int notificationHour, int notificationMinute){
         calendar.set(Calendar.HOUR_OF_DAY, notificationHour);
-        calendar.set(Calendar.MINUTE, notificatonMinute);
+        calendar.set(Calendar.MINUTE, notificationMinute);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
     }
