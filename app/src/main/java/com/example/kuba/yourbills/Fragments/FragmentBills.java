@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ import java.util.Locale;
 import androidx.annotation.AnimRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -123,12 +125,10 @@ public class FragmentBills extends Fragment {
         swipeController = new SwipeController(getActivity(), getContext(), new SwipeControllerActions() {
             @Override
             public void onRightDeleteClicked(int position) {
-                Bill billToRemove = billsListToShow.get(position);
-                mydb.removeBill(billToRemove);
-                billsListToShow.remove(position);
-                billsList.remove(billToRemove);
-                mAdapter.notifyItemRemoved(position);
-                mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
+                if(billsListToShow.get(position).getChildId()!=0)
+                    showDeleteDialog(position);
+                else
+                    deleteBill(position);
                 Log.v("usunalem ", Integer.toString(position));
                 //super.onRightDeleteClicked(position);
             }
@@ -213,7 +213,32 @@ public class FragmentBills extends Fragment {
 
                 //NotificationScheduler notificationScheduler = new NotificationScheduler(getContext());
                 //notificationScheduler.scheduleNotificationWorker(billsListToShow.get(0));
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+                builder1.setMessage("Write your message here.");
+                builder1.setCancelable(true);
 
+
+
+                builder1.setPositiveButton(
+                        "     Delete this Bill only",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //
+                                dialog.cancel();
+                            }
+                        });
+
+                builder1.setNegativeButton(
+                        "     Delete future Bills too",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
 
 
             }
@@ -401,6 +426,73 @@ public class FragmentBills extends Fragment {
         showBillsList();
     }
 
+    private void showDeleteDialog(final int position){
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+        builder1.setMessage("Write your message here.");
+        builder1.setCancelable(true);
+
+
+
+        builder1.setPositiveButton(
+                "     Delete this Bill only",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        deleteBill(position);
+                        dialog.cancel();
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "     Delete future Bills too",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Bill billToRemove = billsListToShow.get(position);
+                        deleteWithFutureBills(billToRemove, true);
+                        billsListToShow = getMonthBillsList();
+                        showBillsList();
+                        //mAdapter.notifyDataSetChanged();
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
+
+    private void deleteBill(int position){
+        Bill billToRemove = billsListToShow.get(position);
+        Bill parent = mydb.getBillById(billToRemove.getId()-1);
+        if(parent!=null && parent.getChildId()==billToRemove.getId()){
+            billsList.get(getBillPositionById(billsList, parent.getId())).setChildId(0);
+            mydb.removeChildId(parent.getId());
+        }
+        mydb.removeBill(billToRemove);
+        billsListToShow.remove(position);
+        billsList.remove(getBillPositionById(billsList, billToRemove.getId()));
+        mAdapter.notifyItemRemoved(position);
+        mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
+    }
+
+    private void deleteWithFutureBills(Bill billToRemove, boolean firstBillToDelete){
+        int childId = billToRemove.getChildId();
+        //usuwanie childId u parenta
+        if(firstBillToDelete){
+            Bill parent = mydb.getBillById(billToRemove.getId()-1);
+            if(parent!=null && parent.getChildId()==billToRemove.getId()){
+                billsList.get(getBillPositionById(billsList, parent.getId())).setChildId(0);
+                mydb.removeChildId(parent.getId());
+            }
+        }
+
+        mydb.removeBill(billToRemove);
+        billsList.remove(getBillPositionById(billsList, billToRemove.getId()));
+        if(childId!=0)
+            deleteWithFutureBills(mydb.getBillById(childId), false);
+        //mAdapter.notifyItemRemoved(position);
+        //mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
+    }
+
+
     //resets hour to calculate bill's deadline properly
     private void resetTime(Calendar calendar){
         calendar.set(Calendar.HOUR_OF_DAY, 23);
@@ -470,6 +562,15 @@ public class FragmentBills extends Fragment {
         sortBillsBy(currentSortCategory);
         mAdapter = new BillsListAdapter(billsListToShow);
         recyclerView.setAdapter(mAdapter);
+    }
+
+    private int getBillPositionById(ArrayList<Bill> list, int id){
+        int position=0;
+        for(int i=0; i<=list.size(); i++){
+            if (list.get(i)!=null && list.get(i).getId()==id)
+                return i;
+        }
+        return position;
     }
 
     private void setLayoutAnimation(final RecyclerView recyclerView, @AnimRes int animation) {

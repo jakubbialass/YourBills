@@ -231,6 +231,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return bill;
     }
 
+    public void removeChildId(int parentId){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("childId", 0);
+        db.update(BILLS_TABLE_NAME, cv, "id="+parentId, null);
+    }
+
 
 
 

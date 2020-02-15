@@ -103,7 +103,7 @@ public class BillsListAdapter extends RecyclerView.Adapter<BillsListAdapter.Bill
             holder.billDaysLeft.setTextColor(holder.mContext.getResources().getColor(R.color.paidTextColor));
         }
         else if(days == 1){
-            info = "One day left";
+            info = "1 day left";
             holder.billDaysLeft.setTextColor(Color.RED);
         }
         else if(days == 0){
@@ -116,7 +116,18 @@ public class BillsListAdapter extends RecyclerView.Adapter<BillsListAdapter.Bill
         }
         else if(bill.getDaysLeft()>30 && bill.getDaysLeft()<365){
             int monthsLeft = (int)Math.floor((double)(bill.getDaysLeft()/30));
-            info = monthsLeft + " months left";
+            if(monthsLeft==1)
+                info = "1 month left";
+            else
+                info = monthsLeft + " months left";
+            holder.billDaysLeft.setTextColor(Color.parseColor("#000000"));
+        }
+        else if(bill.getDaysLeft()>365){
+            int yearsLeft = (int)Math.floor((double)(bill.getDaysLeft()/365));
+            if(yearsLeft==1)
+                info= "1 year left";
+            else
+                info = yearsLeft + " years left";
             holder.billDaysLeft.setTextColor(Color.parseColor("#000000"));
         }
         else {
