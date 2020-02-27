@@ -15,11 +15,22 @@
     android:background="@drawable/bill_item_bg">
 
     <TextView
+        android:id="@+id/bill_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pawprint"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+    </TextView>
+
+    <TextView
         android:id="@+id/bill_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/bill_icon"
+        android:layout_marginLeft="6dp"
         android:textColor="#000000"
         android:textSize="26sp"
         android:text="To jest tytuł">

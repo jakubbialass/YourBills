@@ -18,7 +18,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class TimePickerFragment extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {
-    public static int FRAGMENT_CODE = 2;
+    public static int FRAGMENT_CODE = 1;
     public static String FRAGMENT_TAG = "Hour picker";
 
     @Override

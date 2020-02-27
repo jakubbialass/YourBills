@@ -27,6 +27,7 @@
     <string name="remind_label">Remind:</string>
     <string name="hour_label">Hour:</string>
     <string name="repeat_label">Repeat every:</string>
+    <string name="repeat_no_repeat">No repeat</string>
     <string name="repeat_day">day</string>
     <string name="repeat_week">week</string>
     <string name="repeat_month">month</string>

@@ -266,6 +266,16 @@
                 android:overlapAnchor="false"
                 android:spinnerMode="dropdown">
             </androidx.appcompat.widget.AppCompatSpinner>
+            <TextView
+                android:id="@+id/no_repeat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="No repeat"
+                android:textColor="@color/pickerColor"
+                android:textSize="18sp"
+                android:textStyle="bold">
+            </TextView>
         </LinearLayout>
 
         <TextView

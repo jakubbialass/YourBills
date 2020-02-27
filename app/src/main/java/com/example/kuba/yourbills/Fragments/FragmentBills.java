@@ -213,32 +213,15 @@ public class FragmentBills extends Fragment {
 
                 //NotificationScheduler notificationScheduler = new NotificationScheduler(getContext());
                 //notificationScheduler.scheduleNotificationWorker(billsListToShow.get(0));
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
-                builder1.setMessage("Write your message here.");
-                builder1.setCancelable(true);
+                FragmentManager fragmentManager = getFragmentManager();
+                //fragmentManager.popBackStack();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_top_right, R.anim.slide_out_top_right, R.anim.slide_in_top_right, R.anim.slide_out_top_right);
 
-
-
-                builder1.setPositiveButton(
-                        "     Delete this Bill only",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                //
-                                dialog.cancel();
-                            }
-                        });
-
-                builder1.setNegativeButton(
-                        "     Delete future Bills too",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                //
-                                dialog.cancel();
-                            }
-                        });
-
-                AlertDialog alert11 = builder1.create();
-                alert11.show();
+                FragmentDoublePicker fragmentDoublePicker = new FragmentDoublePicker();
+                fragmentTransaction.add(R.id.picker_placeholder, fragmentDoublePicker, "tag");
+                fragmentTransaction.addToBackStack(FRAGMENT_TAG);
+                fragmentTransaction.commit();
 
 
             }
