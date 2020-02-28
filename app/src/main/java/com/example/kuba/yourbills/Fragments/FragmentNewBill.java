@@ -51,22 +51,23 @@ public class FragmentNewBill extends Fragment {
     private EditText description;//, amount;
 
     private TextInputEditText amountEditText;//, billTitleEditText;
-    private EditText billTitleEditText, repeatCountEditText;
+    private EditText billTitleEditText;
 
-    private TextView dateTextView, repeatEndDateTextView, noRepeat;
+    private TextView dateTextView, noRepeat;
     private ConstraintLayout newBillLayout;
     public static int FRAGMENT_CODE = 1;
     public static String FRAGMENT_TAG = "New bill";
     private View v;
-    private AppCompatSpinner remindSpinner, repeatSpinner;
+    private AppCompatSpinner remindSpinner;
     private TextView hourTextView;
     private DBHelper myDb;
     private String repeatEvery = "No repeat";
     private int countToRepeat = 0;
+    private Date repeatEndDate;
 
 
     //bill parameters to save
-    private Date billDate, repeatEndDate;
+    private Date billDate;
     private int notificationHour, notificationMinute;
     private ArrayList<Bill> newBillsList;
 
@@ -227,9 +228,6 @@ public class FragmentNewBill extends Fragment {
                     setNotification(bill);
                 }
 
-                //myDb.insertBill(newBill);
-                //Log.v("daysBefore: ", remindSpinner.getSelectedItem().toString());
-                //setNotification(newBill);
                 closeKeyboard();
                 sendBillToPreviousFragment(newBill);
                 Log.v("Dodalem", "Billa");
@@ -238,78 +236,7 @@ public class FragmentNewBill extends Fragment {
     }
 
     private void initRepeat(View view){
-
-        repeatCountEditText = view.findViewById(R.id.repeat_count);
-        repeatCountEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                int selectedPosition = repeatSpinner.getSelectedItemPosition();
-                if(charSequence.length()!=0) {
-                    int value = Integer.valueOf(charSequence.toString());
-                    if(value>1){
-                        String[] repeatSpinnerItems = {getResources().getString(R.string.repeat_days),
-                                getResources().getString(R.string.repeat_weeks),
-                                getResources().getString(R.string.repeat_months),
-                                getResources().getString(R.string.repeat_years),};
-                        ArrayAdapter<String> repeatSpinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, repeatSpinnerItems);
-                        repeatSpinner.setAdapter(repeatSpinnerAdapter);
-                    }
-                    else {
-                        String[] repeatSpinnerItems = {getResources().getString(R.string.repeat_day),
-                                getResources().getString(R.string.repeat_week),
-                                getResources().getString(R.string.repeat_month),
-                                getResources().getString(R.string.repeat_year),};
-                        ArrayAdapter<String> repeatSpinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, repeatSpinnerItems);
-                        repeatSpinner.setAdapter(repeatSpinnerAdapter);
-                    }
-
-
-                    Log.v("myValue", Integer.toString(value));
-                }
-                else{
-                    String[] repeatSpinnerItems = {getResources().getString(R.string.repeat_day),
-                            getResources().getString(R.string.repeat_week),
-                            getResources().getString(R.string.repeat_month),
-                            getResources().getString(R.string.repeat_year),};
-                    ArrayAdapter<String> repeatSpinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, repeatSpinnerItems);
-                    repeatSpinner.setAdapter(repeatSpinnerAdapter);
-                }
-                repeatSpinner.setSelection(selectedPosition);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-
-        repeatSpinner = view.findViewById(R.id.repeat_spinner);
-        String[] repeatSpinnerItems = {getResources().getString(R.string.repeat_day),
-                getResources().getString(R.string.repeat_week),
-                getResources().getString(R.string.repeat_month),
-                getResources().getString(R.string.repeat_year),};
-        ArrayAdapter<String> repeatSpinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, repeatSpinnerItems);
-        repeatSpinner.setAdapter(repeatSpinnerAdapter);
-
-
-        repeatEndDateTextView = view.findViewById(R.id.repeat_end_date);
-        repeatEndDateTextView.setTag("repeatEndDate");
         repeatEndDate = getTodayDate();
-        repeatEndDateTextView.setText(getTodaysDate());
-
-        repeatEndDateTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            //@TargetApi(24)
-            public void onClick(View view) {
-                closeKeyboard();
-                showDatePickerDialog(view, repeatEndDateTextView);
-            }
-        });
 
         noRepeat = view.findViewById(R.id.no_repeat);
         noRepeat.setOnClickListener(new View.OnClickListener() {
@@ -328,8 +255,6 @@ public class FragmentNewBill extends Fragment {
                 fragmentTransaction.commit();
             }
         });
-
-
     }
 
 
@@ -381,30 +306,9 @@ public class FragmentNewBill extends Fragment {
     }
 
     private void showDatePickerDialog(View view, final TextView textView) {
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            DatePickerDialog datePickerDialog = new DatePickerDialog(view.getContext());
-            datePickerDialog.getDatePicker().setFirstDayOfWeek(2);
-            datePickerDialog.getDatePicker()
-            datePickerDialog.show();
-            datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                    //setSelectedDate(year, month, day);
-                    if(textView.getTag().equals("billDate"))
-                        billDate = getSelectedDate(year, month, day);
-                    else if(textView.getTag().equals("repeatEndDate"))
-                        repeatEndDate = getSelectedDate(year, month, day);
-                    textView.setText(getDateToString(getSelectedDate(year, month, day)));
-                }
-            });
-        }
-        else{*/
-        Log.v("entering", "<N");
         Calendar calendar = Calendar.getInstance();
         if (textView.getTag().equals("billDate"))
             calendar.setTime(billDate);
-        else
-            calendar.setTime(repeatEndDate);
         DatePickerDialog datePickerDialog = new DatePickerDialog(view.getContext(),
                 0,
                 dateSetListener(view, textView),
@@ -415,7 +319,6 @@ public class FragmentNewBill extends Fragment {
             datePickerDialog.getDatePicker().setFirstDayOfWeek(2);
         }
         datePickerDialog.show();
-        //}
     }
 
 
@@ -426,8 +329,6 @@ public class FragmentNewBill extends Fragment {
                 //setSelectedDate(year, month, day);
                 if(textView.getTag().equals("billDate"))
                     billDate = getSelectedDate(year, month, day);
-                else if(textView.getTag().equals("repeatEndDate"))
-                    repeatEndDate = getSelectedDate(year, month, day);
                 textView.setText(getDateToString(getSelectedDate(year, month, day)));
             }
         };
@@ -466,18 +367,10 @@ public class FragmentNewBill extends Fragment {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);
         resetTime(calendar);
-        //this.billDate = calendar.getTime();
         return calendar.getTime();
     }
 
-    private void setSelectedEndRepeatDate(int year, int month, int day){
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day);
-        resetTime(calendar);
-        this.repeatEndDate = calendar.getTime();
-    }
-
-    //resets hourTextView to calculate bill's deadline properly
+    //resets time in date to calculate bill's deadline properly
     private void resetTime(Calendar calendar){
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
@@ -487,23 +380,10 @@ public class FragmentNewBill extends Fragment {
 
 
     private void sendBillToPreviousFragment(Bill bill){
-       /* Bundle bundle = new Bundle();
-        bundle.putSerializable("newBill", bill);
-        Fragment fragment = getActivity().getSupportFragmentManager().getFragment(null, "Bills");
-        fragment.setArguments(bundle);*/
-
-        /*Intent intent1 = new Intent(getContext(), FragmentNewBill.class);
-        intent1.putExtra("bill", bill);
-        getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_OK, intent1);
-        getFragmentManager().popBackStack();*/
-
         Intent intent = new Intent(getContext(), FragmentNewBill.class);
         intent.putExtra("newBillsList", newBillsList);
         getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_OK, intent);
         getFragmentManager().popBackStack();
-
-
-
     }
 
     private void closeKeyboard(){
@@ -548,16 +428,14 @@ public class FragmentNewBill extends Fragment {
 
                 if(countToRepeat==0)
                     noRepeat.setText(repeatEvery);
-                else
-                    noRepeat.setText(countToRepeat + " " + repeatEvery);
-                repeatEndDateTextView.setText(getDateToString(repeatEndDate));
-
-
+                else {
+                    String repeatInfo = "Every " + countToRepeat + " " + repeatEvery
+                            + "\n to " + getDateToString(repeatEndDate);
+                    noRepeat.setText(repeatInfo);
+                }
             }
         }
     }
-
-
 
 
 

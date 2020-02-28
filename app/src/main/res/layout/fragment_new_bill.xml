@@ -233,77 +233,42 @@
             android:id="@+id/repeat_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="22dp"
+            android:orientation="horizontal"
             android:layout_marginTop="11dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/reminder_section">
+            app:layout_constraintTop_toBottomOf="@+id/reminder_section"
+            android:paddingLeft="22dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:background="@color/backgroundBillsLight">
             <TextView
                 android:id="@+id/repeat_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/repeat_label"
+                android:gravity="left"
+                android:layout_gravity="center_vertical"
                 android:textSize="18sp"
+                android:layout_weight="3"
                 app:layout_constraintLeft_toLeftOf="parent">
             </TextView>
-            <EditText
-                android:id="@+id/repeat_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="2"
-                android:layout_marginLeft="5dp"
-                android:gravity="center"
-                android:inputType="number"
-                android:digits="0123456789"
-                android:maxLength="2"
-                >
-            </EditText>
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/repeat_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:overlapAnchor="false"
-                android:spinnerMode="dropdown">
-            </androidx.appcompat.widget.AppCompatSpinner>
+
             <TextView
                 android:id="@+id/no_repeat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
+                android:layout_weight="1"
                 android:text="No repeat"
+                android:gravity="right"
                 android:textColor="@color/pickerColor"
                 android:textSize="18sp"
-                android:textStyle="bold">
+                android:textStyle="bold"
+                android:drawableRight="@drawable/ic_navigate_next"
+                android:drawableEnd="@drawable/ic_navigate_next">
             </TextView>
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/repeat_end_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="22dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:text="@string/repeat_end"
-            android:textSize="18sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/repeat_linear_layout">
-        </TextView>
-
-        <TextView
-            android:id="@+id/repeat_end_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="Mon, 29.11.2019"
-            android:textColor="@color/pickerColor"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/repeat_end_label"
-            app:layout_constraintLeft_toRightOf="@+id/repeat_end_label">
-        </TextView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
