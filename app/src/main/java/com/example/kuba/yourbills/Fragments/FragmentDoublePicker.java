@@ -1,12 +1,15 @@
 package com.example.kuba.yourbills.Fragments;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
@@ -14,7 +17,10 @@ import android.widget.TextView;
 
 import com.example.kuba.yourbills.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -54,6 +60,10 @@ public class FragmentDoublePicker extends Fragment {
         textView2a = view.findViewById(R.id.text_view_2a);
         textView2b = view.findViewById(R.id.text_view_2b);
 
+        textView2b.setText(getDateToString(repeatEndDate));
+
+
+
         if(countToRepeat==0)
             textView1b.setText(repeatEvery);
         else
@@ -65,11 +75,10 @@ public class FragmentDoublePicker extends Fragment {
         relativeLayoutRepeatEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pickers.setVisibility(View.GONE);
-
-                pickers.setVisibility(View.VISIBLE);
+                showDatePickerDialog(view, textView2b);
             }
         });
+
 
 
 
@@ -136,7 +145,7 @@ public class FragmentDoublePicker extends Fragment {
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
                 if(typePicker.getValue()==1){
                     //valuePicker.setEnabled(false);
-                    setEmpty(valuePicker, values);
+                    setEmpty(valuePicker);
                     countToRepeat = 0;
                     repeatEvery = types[typePicker.getValue()-1];
                     textView1b.setText("No repeat");
@@ -173,8 +182,56 @@ public class FragmentDoublePicker extends Fragment {
         repeatEvery = getArguments().getString("repeatEvery", "No repeat");
     }
 
-    private void setEmpty(NumberPicker numberPicker, String[] strings){
-        strings = new String[]{" "};
+    private void showDatePickerDialog(View view, final TextView textView) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(repeatEndDate);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(view.getContext(),
+                0,
+                dateSetListener(textView),
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            datePickerDialog.getDatePicker().setFirstDayOfWeek(2);
+        }
+        datePickerDialog.show();
+    }
+
+    private DatePickerDialog.OnDateSetListener dateSetListener(final TextView textView){
+        DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                repeatEndDate = getDate(year, month, day);
+                textView.setText(getDateToString(getDate(year, month, day)));
+            }
+        };
+        return onDateSetListener;
+    }
+
+    private Date getDate(int year, int month, int day){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+        resetTime(calendar);
+        return calendar.getTime();
+    }
+
+    private void resetTime(Calendar calendar){
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 0);
+    }
+
+    private String getDateToString(Date date){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+        String dateString = simpleDateFormat.format(date);
+        return dateString;
+    }
+
+    private void setEmpty(NumberPicker numberPicker){
+        String[] strings = new String[]{" "};
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(1);
         numberPicker.setDisplayedValues(strings);
