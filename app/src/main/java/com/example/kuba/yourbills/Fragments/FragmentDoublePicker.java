@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import static android.app.Activity.RESULT_OK;
@@ -34,12 +35,23 @@ public class FragmentDoublePicker extends Fragment {
     private NumberPicker valuePicker, typePicker;
     private TextView textView1a, textView1b, textView2a, textView2b;
     private String[] values, types;
-    private RelativeLayout relativeLayoutRepeatEndDate;
+    private RelativeLayout secondRelative;
     private LinearLayout pickers;
     private Date repeatEndDate;
     private int countToRepeat;
     private String repeatEvery;
     public static int FRAGMENT_CODE = 23485;
+
+    //common
+    private int pickerType;
+
+    //reminder
+    public static int FRAGMENT_REMIND = 23486;
+    private int notificationHour;
+    private int notificationMinute;
+    private int countToRemind;
+    private String remindEvery;
+
 
     @Nullable
     @Override
@@ -54,30 +66,20 @@ public class FragmentDoublePicker extends Fragment {
 
         valuePicker = view.findViewById(R.id.value_picker);
         typePicker = view.findViewById(R.id.type_picker);
-
         textView1a = view.findViewById(R.id.text_view_1a);
         textView1b = view.findViewById(R.id.text_view_1b);
         textView2a = view.findViewById(R.id.text_view_2a);
         textView2b = view.findViewById(R.id.text_view_2b);
 
-        textView2b.setText(getDateToString(repeatEndDate));
 
 
-
-        if(countToRepeat==0)
-            textView1b.setText(repeatEvery);
+        if(pickerType==1)
+            initRepeater(view);
         else
-            textView1b.setText(countToRepeat + " " + repeatEvery);
+            initReminder(view);
 
 
-        pickers = view.findViewById(R.id.pickers);
-        relativeLayoutRepeatEndDate = view.findViewById(R.id.repeat_end_date);
-        relativeLayoutRepeatEndDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDatePickerDialog(view, textView2b);
-            }
-        });
+
 
 
 
@@ -87,7 +89,104 @@ public class FragmentDoublePicker extends Fragment {
         valuePicker.setWrapSelectorWheel(false);
         valuePicker.setEnabled(false);*/
 
-        Log.v("strzelamsetutaj", Integer.toString(countToRepeat));
+
+
+
+        initBackButton(view);
+
+        return view;
+    }
+
+
+    public void initReminder(View view){
+        textView1a.setText(getResources().getString(R.string.remind_label));
+        textView2a.setText(getResources().getString(R.string.time_label));
+        String text1b = countToRemind + " " + remindEvery + " " + getResources().getString(R.string.before);
+        textView1b.setText(text1b);
+        String zero = "";
+        if(notificationMinute<10)
+            zero="0";
+        String text2b = notificationHour + ":" + zero + notificationMinute;
+        textView2b.setText(text2b);
+
+
+        pickers = view.findViewById(R.id.pickers);
+        secondRelative = view.findViewById(R.id.second_relative);
+        secondRelative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment newFragment = new TimePickerFragment();
+                newFragment.show(getActivity().getSupportFragmentManager(), TimePickerFragment.FRAGMENT_TAG);
+                newFragment.setTargetFragment(FragmentDoublePicker.this, TimePickerFragment.FRAGMENT_CODE);
+            }
+        });
+
+
+        setNumbers(valuePicker, 1, 7);
+        valuePicker.setValue(countToRemind);
+
+        if(countToRemind<=1)
+            types = new String[]{"Day", "Week", "Month", "Year"};
+        else
+            types = new String[]{"Days", "Weeks", "Months", "Years"};
+
+        valuePicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                if (valuePicker.getValue() > 1) {
+                    types = new String[]{"Days", "Weeks", "Months", "Years"};
+                    typePicker.setDisplayedValues(types);
+                    countToRemind = Integer.valueOf(values[valuePicker.getValue() - 1]);
+                    remindEvery = types[typePicker.getValue() - 1];
+                } else {
+                    types = new String[]{"Day", "Week", "Month", "Year"};
+                    typePicker.setDisplayedValues(types);
+                    countToRemind = Integer.valueOf(values[valuePicker.getValue() - 1]);
+                    remindEvery = types[typePicker.getValue() - 1];
+                }
+                textView1b.setText(countToRemind + " " + remindEvery + " " + getResources().getString(R.string.before));
+            }
+        });
+
+        typePicker.setMinValue(1);
+        typePicker.setMaxValue(4);
+        typePicker.setWrapSelectorWheel(false);
+        typePicker.setDisplayedValues(types);
+        for (int i = 0; i < types.length; i++) {
+            if (types[i].toUpperCase().equals(remindEvery.toUpperCase())) {
+                typePicker.setValue(i + 1);
+                break;
+            }
+        }
+
+
+        typePicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                    remindEvery = types[typePicker.getValue()-1];
+                    textView1b.setText(countToRemind + " " + remindEvery + " " + getResources().getString(R.string.before));
+            }
+        });
+    }
+
+    public void initRepeater(View view){
+        textView2b.setText(getDateToString(repeatEndDate));
+        if(countToRepeat==0)
+            textView1b.setText(repeatEvery);
+        else
+            textView1b.setText(countToRepeat + " " + repeatEvery);
+
+
+        pickers = view.findViewById(R.id.pickers);
+        secondRelative = view.findViewById(R.id.second_relative);
+        secondRelative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog(view, textView2b);
+            }
+        });
+
+
         if(countToRepeat<=1)
             types = new String[]{"No repeat", "Day", "Week", "Month", "Year"};
         else
@@ -159,11 +258,6 @@ public class FragmentDoublePicker extends Fragment {
                 }
             }
         });
-
-
-        initBackButton(view);
-
-        return view;
     }
 
 
@@ -172,14 +266,34 @@ public class FragmentDoublePicker extends Fragment {
         args.putInt("countToRepeat", countToRepeat);
         args.putString("repeatEvery", repeatEvery);
         args.putLong("repeatEndDateInMillis", repeatEndDateInMillis);
+        args.putInt("pickerType", 1);
+        this.setArguments(args);
+    }
+    public void setArgs(int notificationHour, int notificationMinute, int countToRemind, String remindEvery){
+        Bundle args = new Bundle();
+        args.putInt("notificationHour", notificationHour);
+        args.putInt("notificationMinute", notificationMinute);
+        args.putInt("countToRemind", countToRemind);
+        args.putString("remindEvery", remindEvery);
+        args.putInt("pickerType", 2);
         this.setArguments(args);
     }
 
     private void getArgs(){
-        repeatEndDate = new Date();
-        repeatEndDate.setTime(getArguments().getLong("repeatEndDateInMillis", 0));
-        countToRepeat = getArguments().getInt("countToRepeat", 0);
-        repeatEvery = getArguments().getString("repeatEvery", "No repeat");
+        pickerType = getArguments().getInt("pickerType", 0);
+        if (pickerType==1) {
+            repeatEndDate = new Date();
+            repeatEndDate.setTime(getArguments().getLong("repeatEndDateInMillis", 0));
+            countToRepeat = getArguments().getInt("countToRepeat", 0);
+            repeatEvery = getArguments().getString("repeatEvery", "No repeat");
+        }
+        else if (pickerType==2){
+            notificationHour = getArguments().getInt("notificationHour", 10);
+            notificationMinute = getArguments().getInt("notificationMinute", 0);
+            countToRemind = getArguments().getInt("countToRemind", 1);
+            remindEvery = getArguments().getString("remindEvery", "Day");
+
+        }
     }
 
     private void showDatePickerDialog(View view, final TextView textView) {
@@ -254,9 +368,17 @@ public class FragmentDoublePicker extends Fragment {
 
     private void sendParams(){
         Intent intent = new Intent(getContext(), FragmentDoublePicker.class);
-        intent.putExtra("countToRepeat", countToRepeat);
-        intent.putExtra("repeatEvery", repeatEvery);
-        intent.putExtra("repeatEndDate", repeatEndDate);
+        if(pickerType==1) {
+            intent.putExtra("countToRepeat", countToRepeat);
+            intent.putExtra("repeatEvery", repeatEvery);
+            intent.putExtra("repeatEndDate", repeatEndDate);
+        }
+        else if(pickerType==2){
+            intent.putExtra("notificationHour", notificationHour);
+            intent.putExtra("notificationMinute", notificationMinute);
+            intent.putExtra("countToRemind", countToRemind);
+            intent.putExtra("remindEvery", remindEvery);
+        }
         getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_OK, intent);
         getFragmentManager().popBackStack();
     }
@@ -278,6 +400,25 @@ public class FragmentDoublePicker extends Fragment {
                 return false;
             }
         } );
+    }
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == TimePickerFragment.FRAGMENT_CODE) {
+                notificationHour = (int) data.getSerializableExtra("hour");
+                notificationMinute = (int) data.getSerializableExtra("minute");
+                String zero = "";
+                if (notificationMinute < 10)
+                    zero = "0";
+
+                this.textView2b.setText(notificationHour + ":" + zero + notificationMinute);
+            }
+        }
     }
 
 

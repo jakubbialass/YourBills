@@ -32,6 +32,9 @@ public class NotificationScheduler {
 
         int daysBefore = 1;
 
+
+
+
         if(bill.getNotificationTimeBefore().equals(context.getResources().getString(R.string.two_days_before)))
             daysBefore = 2;
         else if (bill.getNotificationTimeBefore().equals(context.getResources().getString(R.string.three_days_before)))
@@ -48,6 +51,7 @@ public class NotificationScheduler {
                     .addTag("notification")
                     .build();
             WorkManager.getInstance(context).enqueue(notificationWork);
+            Log.v("Kurwa", "1");
         }
         else
             Log.e("notification_error ", "Could't create notification because delay is negative. Probably bill is overdued.");
@@ -77,6 +81,38 @@ public class NotificationScheduler {
 
         //Log.v("today_billDeadline ", Integer.toString(bill.getDaysLeft()));
         Log.v("today_delays ", Long.toString(delay));
+        //Log.v("today_milis ", Long.toString(getCurrentTimeInMillis()));
+        //Log.v("today_bill ", Long.toString(bill.getBillDate().getTime()));
+
+        //return delay;
+        return delay;
+    }
+
+    private long calculateNotificationDelay(Bill bill, int countToRemind, String remindEvery){
+        long oneDayInMillis = 24*60*60*1000;
+
+        Date billDate = bill.getBillDate();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E, dd.MM.yyyy", Locale.getDefault());
+        Calendar calendar = simpleDateFormat.getCalendar();
+        simpleDateFormat.format(new Date());
+        calendar.setTime(billDate);
+        setNotificationTime(calendar, bill.getNotificationHour(), bill.getNotificationMinute());
+
+        int daysBefore = 1;
+        if(remindEvery.toUpperCase().equals(context.getResources().getString(R.string.days).toUpperCase()))
+            daysBefore = countToRemind;
+        else if(remindEvery.toUpperCase().equals(context.getResources().getString(R.string.week).toUpperCase()) || remindEvery.toUpperCase().equals(context.getResources().getString(R.string.weeks).toUpperCase()))
+            daysBefore = countToRemind*7;
+        else if(remindEvery.toUpperCase().equals(context.getResources().getString(R.string.month).toUpperCase()) || remindEvery.toUpperCase().equals(context.getResources().getString(R.string.months).toUpperCase()))
+            daysBefore = countToRemind*30;
+        else if(remindEvery.toUpperCase().equals(context.getResources().getString(R.string.year).toUpperCase()) || remindEvery.toUpperCase().equals(context.getResources().getString(R.string.years).toUpperCase()))
+            daysBefore = countToRemind*365;
+
+        long notificationTimeInMillis = calendar.getTimeInMillis() - (daysBefore * oneDayInMillis);
+        long delay = notificationTimeInMillis-getCurrentTimeInMillis();
+
+        //Log.v("today_billDeadline ", Integer.toString(bill.getDaysLeft()));
+        //Log.v("today_delays ", Long.toString(delay));
         //Log.v("today_milis ", Long.toString(getCurrentTimeInMillis()));
         //Log.v("today_bill ", Long.toString(bill.getBillDate().getTime()));
 

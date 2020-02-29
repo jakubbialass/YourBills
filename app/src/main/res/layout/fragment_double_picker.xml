@@ -46,7 +46,7 @@
         />
 
     <RelativeLayout
-        android:id="@+id/repeat_end_date"
+        android:id="@+id/second_relative"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/divider"

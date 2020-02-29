@@ -28,6 +28,7 @@ public class UploadWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        Log.v("czasdokonca", "123");
         triggerNotification();
         return Result.success();
     }
@@ -43,7 +44,7 @@ public class UploadWorker extends Worker {
 
         Log.v("notification_jakieid ", Integer.toString(id));
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id2")
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentTitle(bill.getBillTitle())
                 .setContentText(getNotificationDescription(bill))

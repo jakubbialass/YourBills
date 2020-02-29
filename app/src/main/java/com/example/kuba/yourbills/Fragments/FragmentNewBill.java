@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -64,12 +62,15 @@ public class FragmentNewBill extends Fragment {
     private String repeatEvery = "No repeat";
     private int countToRepeat = 0;
     private Date repeatEndDate;
+    private TextView remindInfoTextView;
 
 
     //bill parameters to save
     private Date billDate;
     private int notificationHour, notificationMinute;
     private ArrayList<Bill> newBillsList;
+    private int countToRemind;
+    private String remindEvery;
 
 
 
@@ -191,7 +192,7 @@ public class FragmentNewBill extends Fragment {
 
         initRepeat(view);
 
-
+        initRemind(view);
 
 
 
@@ -258,6 +259,33 @@ public class FragmentNewBill extends Fragment {
     }
 
 
+    private void initRemind(View view){
+        notificationHour = 10;
+        notificationMinute = 0;
+        countToRemind = 1;
+        remindEvery = getResources().getString(R.string.day);
+
+
+
+        remindInfoTextView = view.findViewById(R.id.remind_info);
+        remindInfoTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fragmentManager = getFragmentManager();
+                //fragmentManager.popBackStack();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right_to_left, R.anim.slide_out_to_left, R.anim.slide_in_top_right, R.anim.slide_out_top_right);
+
+                FragmentDoublePicker fragmentDoublePicker = new FragmentDoublePicker();
+                fragmentDoublePicker.setTargetFragment(FragmentNewBill.this, FragmentDoublePicker.FRAGMENT_REMIND);
+                fragmentDoublePicker.setArgs(notificationHour, notificationMinute, countToRemind, remindEvery);
+                fragmentTransaction.add(R.id.fragment_placeholder, fragmentDoublePicker, "doublePicker");
+                fragmentTransaction.addToBackStack(FRAGMENT_TAG);
+                fragmentTransaction.commit();
+            }
+        });
+    }
+
 
 
     private void addBillChild(Bill parent, int countToRepeat, String repeatEvery){
@@ -295,13 +323,13 @@ public class FragmentNewBill extends Fragment {
 
     private void addDays(Calendar calendar, int countToRepeat, String repeatEvery){
 
-        if(repeatEvery.toUpperCase().equals(getResources().getString(R.string.repeat_day).toUpperCase()) || repeatEvery.toUpperCase().equals(getResources().getString(R.string.repeat_days).toUpperCase()))
+        if(repeatEvery.toUpperCase().equals(getResources().getString(R.string.day).toUpperCase()) || repeatEvery.toUpperCase().equals(getResources().getString(R.string.days).toUpperCase()))
             calendar.add(Calendar.DAY_OF_MONTH, countToRepeat);
-        else if(repeatEvery.toUpperCase().equals(getResources().getString(R.string.repeat_week).toUpperCase()) || repeatEvery.toUpperCase().equals(getResources().getString(R.string.repeat_weeks).toUpperCase()))
+        else if(repeatEvery.toUpperCase().equals(getResources().getString(R.string.week).toUpperCase()) || repeatEvery.toUpperCase().equals(getResources().getString(R.string.weeks).toUpperCase()))
             calendar.add(Calendar.DAY_OF_MONTH, countToRepeat*7);
-        else if(repeatEvery.toUpperCase().equals(getResources().getString(R.string.repeat_month).toUpperCase()) || repeatEvery.toUpperCase().equals(getResources().getString(R.string.repeat_months).toUpperCase()))
+        else if(repeatEvery.toUpperCase().equals(getResources().getString(R.string.month).toUpperCase()) || repeatEvery.toUpperCase().equals(getResources().getString(R.string.months).toUpperCase()))
             calendar.add(Calendar.MONTH, countToRepeat);
-        else if(repeatEvery.toUpperCase().equals(getResources().getString(R.string.repeat_year).toUpperCase()) || repeatEvery.toUpperCase().equals(getResources().getString(R.string.repeat_years).toUpperCase()))
+        else if(repeatEvery.toUpperCase().equals(getResources().getString(R.string.year).toUpperCase()) || repeatEvery.toUpperCase().equals(getResources().getString(R.string.years).toUpperCase()))
             calendar.add(Calendar.YEAR, countToRepeat);
     }
 

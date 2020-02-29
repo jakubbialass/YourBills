@@ -55,10 +55,10 @@ public class MainActivity extends AppCompatActivity {
         // the NotificationChannel class is new and not in the support library
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             Log.v("notification_channel ", "true");
-            CharSequence name = "channel_name";
-            String description = "channel_description";
+            CharSequence name = "channel_name2";
+            String description = "channel_description2";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("channel_id", name, importance);
+            NotificationChannel channel = new NotificationChannel("channel_id2", name, importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
