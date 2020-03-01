@@ -210,7 +210,7 @@ public class FragmentNewBill extends Fragment {
 
                 Bill newBill = new Bill(billTitleEditText.getEditableText().toString(), description.getEditableText().toString(),
                         amount, billDate, false,
-                        remindSpinner.getSelectedItem().toString(), notificationHour, notificationMinute,
+                        notificationHour, notificationMinute,
                         myDb.getMaxIdFromBills()+1, 0);
 
                 newBillsList.add(newBill);
@@ -308,7 +308,6 @@ public class FragmentNewBill extends Fragment {
                     parent.getBillAmount(),
                     calendar.getTime(),
                     false,
-                    parent.getNotificationTimeBefore(),
                     parent.getNotificationHour(),
                     parent.getNotificationMinute(),
                     parent.getId()+1,
@@ -430,7 +429,7 @@ public class FragmentNewBill extends Fragment {
 
 
     private void setNotification(Bill bill){
-        NotificationScheduler notificationScheduler = new NotificationScheduler(getContext());
+        NotificationScheduler notificationScheduler = new NotificationScheduler(getContext(), countToRemind, remindEvery);
         notificationScheduler.scheduleNotificationWorker(bill);
     }
 
@@ -461,6 +460,21 @@ public class FragmentNewBill extends Fragment {
                             + "\n to " + getDateToString(repeatEndDate);
                     noRepeat.setText(repeatInfo);
                 }
+            }
+            if (requestCode== FragmentDoublePicker.FRAGMENT_REMIND){
+                notificationHour = (int)data.getSerializableExtra("notificationHour");
+                notificationMinute = (int)data.getSerializableExtra("notificationMinute");
+                countToRemind = (int)data.getSerializableExtra("countToRemind");
+                remindEvery = (String)data.getSerializableExtra("remindEvery");
+
+                String zero = "";
+                if(notificationMinute<10)
+                    zero = "0";
+
+                String remindInfo = countToRemind + " " + remindEvery + " " + getResources().getString(R.string.before)
+                        + "\n at " + notificationHour + ":" + zero + notificationMinute ;
+                remindInfoTextView.setText(remindInfo);
+
             }
         }
     }

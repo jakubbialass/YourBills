@@ -19,9 +19,13 @@ import androidx.work.WorkManager;
 public class NotificationScheduler {
 
     private Context context;
+    private int countToRemind;
+    private String remindEvery;
 
-    public NotificationScheduler(Context context){
+    public NotificationScheduler(Context context, int countToRemind, String remindEvery){
         this.context = context;
+        this.countToRemind = countToRemind;
+        this.remindEvery = remindEvery;
     }
 
 
@@ -29,7 +33,7 @@ public class NotificationScheduler {
     public void scheduleNotificationWorker(Bill bill){
 
         Log.v("id_przy_tworzeniu_not", Integer.toString(bill.getId()));
-
+/*
         int daysBefore = 1;
 
 
@@ -41,11 +45,11 @@ public class NotificationScheduler {
             daysBefore = 3;
         else if (bill.getNotificationTimeBefore().equals(context.getResources().getString(R.string.one_week_before)))
             daysBefore = 7;
-
-        if (calculateNotificationDelay(bill, daysBefore) > 0) {
+*/
+        if (calculateNotificationDelay(bill, countToRemind, remindEvery) > 0) {
             Data inputData = new Data.Builder().putInt(UploadWorker.NOTIFICATION_ID, bill.getId()).build();
             OneTimeWorkRequest notificationWork = new OneTimeWorkRequest.Builder(UploadWorker.class)
-                    .setInitialDelay(calculateNotificationDelay(bill, daysBefore), TimeUnit.MILLISECONDS)
+                    .setInitialDelay(calculateNotificationDelay(bill, countToRemind, remindEvery), TimeUnit.MILLISECONDS)
                     //.setInitialDelay(5000, TimeUnit.MILLISECONDS)
                     .setInputData(inputData)
                     .addTag("notification")
@@ -111,9 +115,12 @@ public class NotificationScheduler {
         long notificationTimeInMillis = calendar.getTimeInMillis() - (daysBefore * oneDayInMillis);
         long delay = notificationTimeInMillis-getCurrentTimeInMillis();
 
-        //Log.v("today_billDeadline ", Integer.toString(bill.getDaysLeft()));
-        //Log.v("today_delays ", Long.toString(delay));
-        //Log.v("today_milis ", Long.toString(getCurrentTimeInMillis()));
+        Log.v("today_daysbefore", Integer.toString(daysBefore));
+        Log.v("today_billDeadline ", Integer.toString(bill.getDaysLeft()));
+        Log.v("today_delays ", Long.toString(delay));
+        Log.v("today_notimilis ", Long.toString(notificationTimeInMillis));
+        Log.v("today_milis ", Long.toString(getCurrentTimeInMillis()));
+        Log.v("today_calendar ", calendar.getTime().toString());
         //Log.v("today_bill ", Long.toString(bill.getBillDate().getTime()));
 
         //return delay;

@@ -59,7 +59,7 @@ public class UploadWorker extends Worker {
 
     private String getNotificationTimeLeft(Bill bill){
         String timeLeft = getApplicationContext().getResources().getString(R.string.one_day_left);
-        String timeBefore = bill.getNotificationTimeBefore();
+        String timeBefore = "";
         if(timeBefore.equals(getApplicationContext().getResources().getString(R.string.two_days_before)))
             timeLeft = getApplicationContext().getResources().getString(R.string.two_days_left);
         else if (timeBefore.equals(getApplicationContext().getResources().getString(R.string.three_days_before)))

@@ -22,7 +22,7 @@ public class Bill implements Serializable {
     private int daysLeft;
     private String month;
     private int id;
-    private String notificationTimeBefore;
+    //private String notificationTimeBefore;
     private int notificationHour, notificationMinute;
     private int childId; // 0 = no child
 
@@ -32,7 +32,7 @@ public class Bill implements Serializable {
 
 
     public Bill(String billTitle, String billDescription, float billAmount, Date date, boolean paid,
-                String notificationTimeBefore, int notificationHour, int notificationMinute,
+                int notificationHour, int notificationMinute,
                 int id, int childId){
         this.billTitle = billTitle;
         this.billDescription = billDescription;
@@ -44,7 +44,7 @@ public class Bill implements Serializable {
         this.billDate = date;
         this.paid = paid;
         this.daysLeft = setDaysLeft(this);
-        this.notificationTimeBefore = notificationTimeBefore;
+        //this.notificationTimeBefore = notificationTimeBefore;
         this.notificationHour = notificationHour;
         this.notificationMinute = notificationMinute;
         this.childId = childId;
@@ -171,9 +171,6 @@ public class Bill implements Serializable {
         return this.month;
     }
 
-    public String getNotificationTimeBefore(){
-        return this.notificationTimeBefore;
-    }
 
     public int getNotificationHour() {
         return notificationHour;
