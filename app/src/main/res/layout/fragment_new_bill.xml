@@ -186,52 +186,36 @@
             android:id="@+id/reminder_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="22dp"
             android:layout_marginTop="11dp"
+            android:orientation="horizontal"
+            android:paddingLeft="22dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:background="@color/backgroundBillsLight"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/remind_label"
+                android:layout_weight="3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/remind_label"
                 android:textSize="18sp">
             </TextView>
 
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/remind_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:overlapAnchor="false"
-                android:spinnerMode="dropdown">
-            </androidx.appcompat.widget.AppCompatSpinner>
-
             <TextView
-                android:id="@+id/hour_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/hour_label"
-                android:textSize="18sp">
-            </TextView>
-
-            <TextView
-                android:id="@+id/hour"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:text="10:00"
-                android:textColor="@color/pickerColor"
-                android:textSize="18sp"
-                android:textStyle="bold">
-            </TextView>
-
-            <TextView
+                android:layout_weight="1"
                 android:id="@+id/remind_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="remindInfo">
+                android:text="remindInfo"
+                android:gravity="right"
+                android:textColor="@color/pickerColor"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:drawableEnd="@drawable/ic_navigate_next"
+                android:drawableRight="@drawable/ic_navigate_next">
             </TextView>
 
         </LinearLayout>
@@ -241,7 +225,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="11dp"
+            android:layout_marginTop="1dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/reminder_section"

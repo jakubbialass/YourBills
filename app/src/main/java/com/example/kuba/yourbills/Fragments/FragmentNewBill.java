@@ -56,8 +56,6 @@ public class FragmentNewBill extends Fragment {
     public static int FRAGMENT_CODE = 1;
     public static String FRAGMENT_TAG = "New bill";
     private View v;
-    private AppCompatSpinner remindSpinner;
-    private TextView hourTextView;
     private DBHelper myDb;
     private String repeatEvery = "No repeat";
     private int countToRepeat = 0;
@@ -160,6 +158,8 @@ public class FragmentNewBill extends Fragment {
         dateTextView = view.findViewById(R.id.date);
         dateTextView.setTag("billDate");
         billDate = getTodayDate();
+        resetTime(billDate);
+        Log.v("datowanie_init", billDate.toString());
         dateTextView.setText(getTodaysDate());
         dateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,24 +167,6 @@ public class FragmentNewBill extends Fragment {
             public void onClick(View view) {
                 closeKeyboard();
                 showDatePickerDialog(view, dateTextView);
-            }
-        });
-
-        remindSpinner = view.findViewById(R.id.remind_spinner);
-        String[] remindSpinnerItems = {getResources().getString(R.string.one_day_before),
-                getResources().getString(R.string.two_days_before),
-                getResources().getString(R.string.three_days_before),
-                getResources().getString(R.string.one_week_before),};
-        ArrayAdapter<String> remindSpinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, remindSpinnerItems);
-        remindSpinner.setAdapter(remindSpinnerAdapter);
-
-        hourTextView = view.findViewById(R.id.hour);
-        hourTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DialogFragment newFragment = new TimePickerFragment();
-                newFragment.show(getActivity().getSupportFragmentManager(), TimePickerFragment.FRAGMENT_TAG);
-                newFragment.setTargetFragment(FragmentNewBill.this, TimePickerFragment.FRAGMENT_CODE);
             }
         });
 
@@ -210,7 +192,7 @@ public class FragmentNewBill extends Fragment {
 
                 Bill newBill = new Bill(billTitleEditText.getEditableText().toString(), description.getEditableText().toString(),
                         amount, billDate, false,
-                        notificationHour, notificationMinute,
+                        notificationHour, notificationMinute, countToRemind, remindEvery,
                         myDb.getMaxIdFromBills()+1, 0);
 
                 newBillsList.add(newBill);
@@ -266,8 +248,13 @@ public class FragmentNewBill extends Fragment {
         remindEvery = getResources().getString(R.string.day);
 
 
-
         remindInfoTextView = view.findViewById(R.id.remind_info);
+        String zero = "";
+        if(notificationMinute<10)
+            zero = "0";
+        String remindInfo = countToRemind + " " + remindEvery + " " + getResources().getString(R.string.before)
+                + "\n at " + notificationHour + ":" + zero + notificationMinute ;
+        remindInfoTextView.setText(remindInfo);
         remindInfoTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -310,6 +297,8 @@ public class FragmentNewBill extends Fragment {
                     false,
                     parent.getNotificationHour(),
                     parent.getNotificationMinute(),
+                    parent.getCountToRemind(),
+                    parent.getRemindEvery(),
                     parent.getId()+1,
                     0);
 
@@ -367,7 +356,7 @@ public class FragmentNewBill extends Fragment {
         String todaysDate = simpleDateFormat.format(new Date());
         Calendar calendar = simpleDateFormat.getCalendar();
         //resetTime(calendar);
-        billDate = calendar.getTime();
+        //billDate = calendar.getTime();
         return todaysDate;
     }
     private Date getTodayDate(){
@@ -405,6 +394,16 @@ public class FragmentNewBill extends Fragment {
         calendar.set(Calendar.MILLISECOND, 0);
     }
 
+    private void resetTime(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 0);
+        date.setTime(calendar.getTime().getTime());
+    }
+
 
     private void sendBillToPreviousFragment(Bill bill){
         Intent intent = new Intent(getContext(), FragmentNewBill.class);
@@ -439,14 +438,14 @@ public class FragmentNewBill extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            if (requestCode== TimePickerFragment.FRAGMENT_CODE){
+            if (requestCode== TimePickerFragment.FRAGMENT_CODE){/*
                 int hour = notificationHour = (int)data.getSerializableExtra("hour");
                 int minute = notificationMinute = (int)data.getSerializableExtra("minute");
                 String zero = "";
                 if(minute<10)
                     zero="0";
 
-                this.hourTextView.setText(hour + ":" + zero + minute);
+                this.hourTextView.setText(hour + ":" + zero + minute);*/
             }
             if (requestCode== FragmentDoublePicker.FRAGMENT_CODE){
                 countToRepeat = (int)data.getSerializableExtra("countToRepeat");

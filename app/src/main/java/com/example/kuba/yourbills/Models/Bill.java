@@ -23,7 +23,10 @@ public class Bill implements Serializable {
     private String month;
     private int id;
     //private String notificationTimeBefore;
-    private int notificationHour, notificationMinute;
+    private int notificationHour;
+    private int notificationMinute;
+    private int countToRemind;
+    private String remindEvery;
     private int childId; // 0 = no child
 
     public enum SortCategory {TITLE, AMOUNT, DEADLINE};
@@ -32,7 +35,7 @@ public class Bill implements Serializable {
 
 
     public Bill(String billTitle, String billDescription, float billAmount, Date date, boolean paid,
-                int notificationHour, int notificationMinute,
+                int notificationHour, int notificationMinute, int countToRemind, String remindEvery,
                 int id, int childId){
         this.billTitle = billTitle;
         this.billDescription = billDescription;
@@ -47,6 +50,8 @@ public class Bill implements Serializable {
         //this.notificationTimeBefore = notificationTimeBefore;
         this.notificationHour = notificationHour;
         this.notificationMinute = notificationMinute;
+        this.countToRemind = countToRemind;
+        this.remindEvery = remindEvery;
         this.childId = childId;
         setMonth();
     }
@@ -186,6 +191,13 @@ public class Bill implements Serializable {
 
     public void setNotificationMinute(int notificationMinute) {
         this.notificationMinute = notificationMinute;
+    }
+
+    public int getCountToRemind() {
+        return countToRemind;
+    }
+    public String getRemindEvery() {
+        return remindEvery;
     }
 
     private void setMonth(){

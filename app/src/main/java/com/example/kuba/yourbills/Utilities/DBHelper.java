@@ -10,9 +10,12 @@ import android.util.Log;
 
 import com.example.kuba.yourbills.Models.Bill;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import androidx.annotation.Nullable;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -30,7 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "create table bills " +
                         "(id integer primary key, title TEXT,description TEXT,billAmount REAL,billDate INTEGER," +
-                        " notificationHour INTEGER, notificationMinute INTEGER, paid INTEGER, childId INTEGER)"
+                        " notificationHour INTEGER, notificationMinute INTEGER, countToRemind INTEGER, remindEvery TEXT, paid INTEGER, childId INTEGER)"
         );
     }
 
@@ -48,11 +51,13 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("description", bill.getBillDescription());
         cv.put("billAmount", bill.getBillAmount());
         cv.put("billDate", bill.getBillDate().getTime());
+        cv.put("notificationHour", bill.getNotificationHour());
+        cv.put("notificationMinute", bill.getNotificationMinute());
+        cv.put("countToRemind", bill.getCountToRemind());
+        cv.put("remindEvery", bill.getRemindEvery());
         cv.put("paid", bill.isPaid()?1:0); //1 if true 0 if false
         cv.put("childId", bill.getChildId());
-        Log.v("sprawdzam date przed ", String.valueOf(bill.getBillDate().getTime()));
         db.insert("bills", null, cv);
-        Log.v("wstawione " , "do bazy");
         return true;
     }
 
@@ -90,28 +95,9 @@ public class DBHelper extends SQLiteOpenHelper {
             }
             //id_To_Update = Value;
             Log.v("billowy8 " , Integer.toString(rs.getCount()));
-
+            Bill bill = null;
             if(rs!=null && rs.getCount()>0) {
-                Log.v("billowy3 " , "wszedlem ");
-                rs.moveToFirst();
-                //int id = rs.getInt(rs.getColumnIndex("id"));
-                String title = rs.getString(rs.getColumnIndex("title"));
-                String description = rs.getString(rs.getColumnIndex("description"));
-                float billAmount = rs.getFloat(rs.getColumnIndex("billAmount"));
-                long dateInMillis = rs.getLong(rs.getColumnIndex("billDate"));
-                int notificationHour = rs.getInt(rs.getColumnIndex("notificationHour"));
-                int notificationMinute = rs.getInt(rs.getColumnIndex("notificationMinute"));
-                int childId = rs.getInt(rs.getColumnIndex("childId"));
-
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(dateInMillis);
-                resetTime(calendar);
-                Date billDate = calendar.getTime();
-                boolean paid = (rs.getInt(rs.getColumnIndex("paid"))) == 1;
-
-                Bill bill = new Bill(title, description, billAmount, billDate, paid,
-                        notificationHour, notificationMinute,
-                        id, childId);
+                bill = getBillWithArgs(rs);
 
                 tempBillsList.add(bill);
                 id++;
@@ -154,72 +140,13 @@ public class DBHelper extends SQLiteOpenHelper {
         calendar.set(Calendar.MILLISECOND, 0);
     }
 
-    public Bill getLastBillWithTitle(Bill bill){
-        ArrayList<Bill> tempBillsList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor rs = db.rawQuery( "select * from bills", null );
-        for(int i=1; i<=numberOfRows(); i++) {
-            if(i>1)
-                rs.moveToNext();
-            else
-                rs.moveToFirst();
-            String title = rs.getString(rs.getColumnIndex("title"));
-            if(title.equals(bill.getBillTitle())) {
-                tempBillsList.add(getBillFromCursor(rs));
-            }
-        }
-        if (!rs.isClosed())  {
-            rs.close();
-        }
-        return tempBillsList.get(tempBillsList.size()-1);
-    }
-
-
-    private Bill getBillFromCursor(Cursor rs){
-        int id = rs.getInt(rs.getColumnIndex("id"));
-        String title = rs.getString(rs.getColumnIndex("title"));
-        String description = rs.getString(rs.getColumnIndex("description"));
-        float billAmount = rs.getFloat(rs.getColumnIndex("billAmount"));
-        long dateInMillis = rs.getLong(rs.getColumnIndex("billDate"));
-        int notificationHour = rs.getInt(rs.getColumnIndex("notificationHour"));
-        int notificationMinute = rs.getInt(rs.getColumnIndex("notificationMinute"));
-        int childId = rs.getInt(rs.getColumnIndex("childId"));
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(dateInMillis);
-        resetTime(calendar);
-        Date billDate = calendar.getTime();
-        boolean paid = (rs.getInt(rs.getColumnIndex("paid"))) == 1;
-
-        return new Bill(title, description, billAmount, billDate, paid,
-                notificationHour, notificationMinute,
-                id, childId);
-    }
 
     public Bill getBillById(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor rs = db.rawQuery( "select * from bills WHERE id= " + id + "", null );
         Bill bill = null;
         if(rs!=null && rs.getCount()>0) {
-            rs.moveToFirst();
-            String title = rs.getString(rs.getColumnIndex("title"));
-            String description = rs.getString(rs.getColumnIndex("description"));
-            float billAmount = rs.getFloat(rs.getColumnIndex("billAmount"));
-            long dateInMillis = rs.getLong(rs.getColumnIndex("billDate"));
-            int notificationHour = rs.getInt(rs.getColumnIndex("notificationHour"));
-            int notificationMinute = rs.getInt(rs.getColumnIndex("notificationMinute"));
-            int childId = rs.getInt(rs.getColumnIndex("childId"));
-
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(dateInMillis);
-            resetTime(calendar);
-            Date billDate = calendar.getTime();
-
-            boolean paid = (rs.getInt(rs.getColumnIndex("paid"))) == 1;
-            bill = new Bill(title, description, billAmount, billDate, paid,
-                    notificationHour, notificationMinute,
-                    id, childId);
+            bill = getBillWithArgs(rs);
         }
         if (!rs.isClosed()) {
             rs.close();
@@ -234,6 +161,30 @@ public class DBHelper extends SQLiteOpenHelper {
         db.update(BILLS_TABLE_NAME, cv, "id="+parentId, null);
     }
 
+
+    private Bill getBillWithArgs(Cursor rs){
+        rs.moveToFirst();
+        int id = rs.getInt(rs.getColumnIndex("id"));
+        String title = rs.getString(rs.getColumnIndex("title"));
+        String description = rs.getString(rs.getColumnIndex("description"));
+        float billAmount = rs.getFloat(rs.getColumnIndex("billAmount"));
+        long dateInMillis = rs.getLong(rs.getColumnIndex("billDate"));
+        int notificationHour = rs.getInt(rs.getColumnIndex("notificationHour"));
+        int notificationMinute = rs.getInt(rs.getColumnIndex("notificationMinute"));
+        int countToRemind = rs.getInt(rs.getColumnIndex("countToRemind"));
+        String remindEvery = rs.getString(rs.getColumnIndex("remindEvery"));
+        int childId = rs.getInt(rs.getColumnIndex("childId"));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(dateInMillis);
+        resetTime(calendar);
+        Date billDate = calendar.getTime();
+        boolean paid = (rs.getInt(rs.getColumnIndex("paid"))) == 1;
+
+        return new Bill(title, description, billAmount, billDate, paid,
+                notificationHour, notificationMinute, countToRemind, remindEvery,
+                id, childId);
+    }
 
 
 
