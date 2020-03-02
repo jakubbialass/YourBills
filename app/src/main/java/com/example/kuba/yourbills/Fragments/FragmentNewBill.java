@@ -62,6 +62,9 @@ public class FragmentNewBill extends Fragment {
     private Date repeatEndDate;
     private TextView remindInfoTextView;
 
+    //Category
+    private TextView categoryInfoTextView;
+    private String categoryInfo;
 
     //bill parameters to save
     private Date billDate;
@@ -139,6 +142,7 @@ public class FragmentNewBill extends Fragment {
                 closeKeyboard();
             }
         });
+        newBillLayout.setSoundEffectsEnabled(false);
 
         myDb = new DBHelper(view.getContext());
 
@@ -175,6 +179,8 @@ public class FragmentNewBill extends Fragment {
         initRepeat(view);
 
         initRemind(view);
+
+        initCategory(view);
 
 
 
@@ -225,6 +231,7 @@ public class FragmentNewBill extends Fragment {
         noRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                closeKeyboard();
                 FragmentManager fragmentManager = getFragmentManager();
                 //fragmentManager.popBackStack();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -239,7 +246,6 @@ public class FragmentNewBill extends Fragment {
             }
         });
     }
-
 
     private void initRemind(View view){
         notificationHour = 10;
@@ -258,6 +264,7 @@ public class FragmentNewBill extends Fragment {
         remindInfoTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                closeKeyboard();
                 FragmentManager fragmentManager = getFragmentManager();
                 //fragmentManager.popBackStack();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -273,7 +280,26 @@ public class FragmentNewBill extends Fragment {
         });
     }
 
+    private void initCategory(View view){
+        categoryInfoTextView = view.findViewById(R.id.category_info);
+        categoryInfoTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeKeyboard();
+                FragmentManager fragmentManager = getFragmentManager();
+                //fragmentManager.popBackStack();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right_to_left, R.anim.slide_out_to_left, R.anim.slide_in_top_right, R.anim.slide_out_top_right);
 
+                FragmentCategory fragmentCategory = new FragmentCategory();
+                fragmentCategory.setArgs(categoryInfoTextView.getText().toString());
+                fragmentCategory.setTargetFragment(FragmentNewBill.this, FragmentCategory.FRAGMENT_CODE);
+                fragmentTransaction.add(R.id.fragment_placeholder, fragmentCategory, "category");
+                fragmentTransaction.addToBackStack(FRAGMENT_TAG);
+                fragmentTransaction.commit();
+            }
+        });
+    }
 
     private void addBillChild(Bill parent, int countToRepeat, String repeatEvery){
 
@@ -473,7 +499,9 @@ public class FragmentNewBill extends Fragment {
                 String remindInfo = countToRemind + " " + remindEvery + " " + getResources().getString(R.string.before)
                         + "\n at " + notificationHour + ":" + zero + notificationMinute ;
                 remindInfoTextView.setText(remindInfo);
-
+            }
+            if (requestCode == FragmentCategory.FRAGMENT_CODE){
+                categoryInfoTextView.setText((String)data.getSerializableExtra("selectedCategory"));
             }
         }
     }

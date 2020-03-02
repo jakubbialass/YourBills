@@ -15,21 +15,26 @@
     <string name="to_pay_bill">to pay your bill</string>
 
     <!--New Bill-->
-    <string name="one_day_before">1 day before</string>
-    <string name="two_days_before">1 days before</string>
-    <string name="three_days_before">1 days before</string>
-    <string name="one_week_before">1 week before</string>
     <string name="title_hint">Title</string>
     <string name="description_hint">Description</string>
     <string name="amount_hint">Amount</string>
     <string name="deadline_label">Deadline:</string>
+
+    <string name="one_day_before">1 day before</string>
+    <string name="two_days_before">1 days before</string>
+    <string name="three_days_before">1 days before</string>
+    <string name="one_week_before">1 week before</string>
+
     <string name="advanced_section">Advanced section</string>
     <string name="remind_label">Remind:</string>
     <string name="hour_label">Hour:</string>
     <string name="time_label">Time:</string>
     <string name="before">before</string>
+
     <string name="repeat_label">Repeat every:</string>
     <string name="repeat_no_repeat">No repeat</string>
+    <string name="repeat_end">Repeat end:</string>
+
     <string name="day">day</string>
     <string name="week">week</string>
     <string name="month">month</string>
@@ -38,7 +43,29 @@
     <string name="weeks">weeks</string>
     <string name="months">months</string>
     <string name="years">years</string>
-    <string name="repeat_end">Repeat end:</string>
+
+    //Categories
+    <string name="category_label">Category:</string>
+    <string name="category_auto">Auto</string>
+    <string name="category_bank">Bank</string>
+    <string name="category_childcare">Childcare</string>
+    <string name="category_credit">Credit</string>
+    <string name="category_credit_card">Credit Card Payment</string>
+    <string name="category_dining">Dining</string>
+    <string name="category_entertainment">Entertainment</string>
+    <string name="category_gifts">Gifts</string>
+    <string name="category_health">Health @amp; Beauty</string>
+    <string name="category_home_payment">Home Payment</string>
+    <string name="category_insurance">Insurance</string>
+    <string name="category_loan">Loan</string>
+    <string name="category_medical">Medical</string>
+    <string name="category_misc">Misc</string>
+    <string name="category_mortgage">Mortgage Payment</string>
+    <string name="category_pets">Pets</string>
+    <string name="category_rent">Rent</string>
+    <string name="category_uncategorized">Uncategorized</string>
+    <string name="category_utilities">Utilities</string>
+
 
 
 </resources>
