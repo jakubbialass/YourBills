@@ -23,6 +23,7 @@
         <item>@string/category_utilities</item>
     </string-array>
 
+
     <integer-array name="category_icons">
         <item>@drawable/ic_payment</item>
         <item>@drawable/ic_payment</item>

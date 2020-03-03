@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.kuba.yourbills.Adapters.BillsListAdapter;
+import com.example.kuba.yourbills.Models.Category;
 import com.example.kuba.yourbills.Utilities.DBHelper;
 import com.example.kuba.yourbills.R;
 import com.example.kuba.yourbills.Models.Bill;
@@ -34,6 +36,7 @@ import com.example.kuba.yourbills.Utilities.SwipeControllerActions;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -66,6 +69,7 @@ public class FragmentBills extends Fragment {
     private Toolbar toolbarBills;
     private Bill.SortCategory currentSortCategory = Bill.SortCategory.DEADLINE;
     private CheckBox hidePaidCheckBox;
+    private ArrayList<Category> categoriesList;
 
     private LinearLayout filtersLayout;
     private AppCompatSpinner filterSelector;
@@ -106,6 +110,7 @@ public class FragmentBills extends Fragment {
     private void init(View view){
         mydb = new DBHelper(view.getContext());
         billsList = getBillsFromDatabase();
+        categoriesList = createCategoriesList();
 
         initiateToolbar(view);
         initiateMonthDisplay(view);
@@ -543,7 +548,7 @@ public class FragmentBills extends Fragment {
 
     private void showBillsList(){
         sortBillsBy(currentSortCategory);
-        mAdapter = new BillsListAdapter(billsListToShow);
+        mAdapter = new BillsListAdapter(billsListToShow, categoriesList);
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -556,6 +561,20 @@ public class FragmentBills extends Fragment {
         return position;
     }
 
+    private ArrayList<Category> createCategoriesList(){
+        ArrayList<Category> categoriesList = new ArrayList<>();
+        ArrayList<String> categoriesTitles = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.category_titles)));
+        TypedArray categoriesIcons = getResources().obtainTypedArray(R.array.category_icons);
+        if(categoriesTitles.size()==categoriesIcons.length()){
+            for(int i=0; i<categoriesTitles.size(); i++){
+                Category category = new Category(categoriesTitles.get(i), categoriesIcons.getDrawable(i));
+                categoriesList.add(category);
+            }
+        }
+        return categoriesList;
+    }
+
+
     private void setLayoutAnimation(final RecyclerView recyclerView, @AnimRes int animation) {
         final Context context = recyclerView.getContext();
         final LayoutAnimationController controller =
@@ -565,6 +584,8 @@ public class FragmentBills extends Fragment {
         recyclerView.getAdapter().notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

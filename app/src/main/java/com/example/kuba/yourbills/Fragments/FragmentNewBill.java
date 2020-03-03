@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
@@ -27,6 +28,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -175,7 +177,6 @@ public class FragmentNewBill extends Fragment {
         });
 
 
-
         initRepeat(view);
 
         initRemind(view);
@@ -199,6 +200,7 @@ public class FragmentNewBill extends Fragment {
                 Bill newBill = new Bill(billTitleEditText.getEditableText().toString(), description.getEditableText().toString(),
                         amount, billDate, false,
                         notificationHour, notificationMinute, countToRemind, remindEvery,
+                        categoryInfo,
                         myDb.getMaxIdFromBills()+1, 0);
 
                 newBillsList.add(newBill);
@@ -282,6 +284,8 @@ public class FragmentNewBill extends Fragment {
 
     private void initCategory(View view){
         categoryInfoTextView = view.findViewById(R.id.category_info);
+        categoryInfo = getResources().getString(R.string.category_no_category);
+        categoryInfoTextView.setText(categoryInfo);
         categoryInfoTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -325,6 +329,7 @@ public class FragmentNewBill extends Fragment {
                     parent.getNotificationMinute(),
                     parent.getCountToRemind(),
                     parent.getRemindEvery(),
+                    parent.getCategoryTitle(),
                     parent.getId()+1,
                     0);
 
@@ -459,6 +464,9 @@ public class FragmentNewBill extends Fragment {
     }
 
 
+
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -501,10 +509,12 @@ public class FragmentNewBill extends Fragment {
                 remindInfoTextView.setText(remindInfo);
             }
             if (requestCode == FragmentCategory.FRAGMENT_CODE){
-                categoryInfoTextView.setText((String)data.getSerializableExtra("selectedCategory"));
+                categoryInfo = (String)data.getSerializableExtra("selectedCategory");
+                categoryInfoTextView.setText(categoryInfo);
             }
         }
     }
+
 
 
 

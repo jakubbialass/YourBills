@@ -1,13 +1,16 @@
 package com.example.kuba.yourbills.Adapters;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.kuba.yourbills.Models.Category;
 import com.example.kuba.yourbills.Utilities.DBHelper;
 import com.example.kuba.yourbills.R;
 import com.example.kuba.yourbills.Models.Bill;
@@ -15,6 +18,7 @@ import com.example.kuba.yourbills.Models.Bill;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -26,9 +30,11 @@ public class BillsListAdapter extends RecyclerView.Adapter<BillsListAdapter.Bill
 
     private DBHelper mydb;
     private ArrayList<Bill> billsList;
+    private ArrayList<Category> categoriesList;
 
-    public BillsListAdapter(ArrayList<Bill> billsList){
+    public BillsListAdapter(ArrayList<Bill> billsList, ArrayList<Category> categoriesList){
         this.billsList = billsList;
+        this.categoriesList = categoriesList;
     }
 
     public static class BillsViewHolder extends RecyclerView.ViewHolder{
@@ -36,6 +42,7 @@ public class BillsListAdapter extends RecyclerView.Adapter<BillsListAdapter.Bill
         private TextView billDescription;
         private TextView billAmount;
         private TextView billDaysLeft;
+        private TextView billCategoryTextView;
         private final Context mContext;
 
 
@@ -46,6 +53,7 @@ public class BillsListAdapter extends RecyclerView.Adapter<BillsListAdapter.Bill
             billDescription = itemView.findViewById(R.id.bill_description);
             billAmount = itemView.findViewById(R.id.bill_amount);
             billDaysLeft = itemView.findViewById(R.id.bill_days_left);
+            billCategoryTextView = itemView.findViewById(R.id.bill_icon);
             mContext = itemView.getContext();
         }
     }
@@ -68,6 +76,7 @@ public class BillsListAdapter extends RecyclerView.Adapter<BillsListAdapter.Bill
        // holder.billDaysLeft.setText(String.valueOf(getDaysLeft(bill)));
         holder.billDaysLeft.setText(deadlineToString(holder, bill));
         holder.billDescription.setText(bill.getBillDescription());
+        holder.billCategoryTextView.setBackground(getCategoryIcon(bill.getCategoryTitle()));
     }
 
     @Override
@@ -148,6 +157,18 @@ public class BillsListAdapter extends RecyclerView.Adapter<BillsListAdapter.Bill
         simpleDateFormat.format(new Date());
         Calendar calendar = simpleDateFormat.getCalendar();
         return calendar;
+    }
+
+    private Drawable getCategoryIcon(String categoryTitle){
+        Drawable icon = categoriesList.get(0).getIcon();
+        for(Category category : categoriesList){
+            Log.v("kategorie_sprawdzam", categoryTitle + " " + category.getTitle());
+            if(categoryTitle.toUpperCase().equals(category.getTitle().toUpperCase())) {
+                icon = category.getIcon();
+                break;
+            }
+        }
+        return icon;
     }
 
 }

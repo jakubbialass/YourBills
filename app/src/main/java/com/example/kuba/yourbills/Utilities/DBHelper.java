@@ -33,7 +33,9 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "create table bills " +
                         "(id integer primary key, title TEXT,description TEXT,billAmount REAL,billDate INTEGER," +
-                        " notificationHour INTEGER, notificationMinute INTEGER, countToRemind INTEGER, remindEvery TEXT, paid INTEGER, childId INTEGER)"
+                        " notificationHour INTEGER, notificationMinute INTEGER, countToRemind INTEGER, remindEvery TEXT," +
+                        " categoryTitle STRING," +
+                        " paid INTEGER, childId INTEGER)"
         );
     }
 
@@ -55,6 +57,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("notificationMinute", bill.getNotificationMinute());
         cv.put("countToRemind", bill.getCountToRemind());
         cv.put("remindEvery", bill.getRemindEvery());
+        cv.put("categoryTitle", bill.getCategoryTitle());
         cv.put("paid", bill.isPaid()?1:0); //1 if true 0 if false
         cv.put("childId", bill.getChildId());
         db.insert("bills", null, cv);
@@ -173,6 +176,7 @@ public class DBHelper extends SQLiteOpenHelper {
         int notificationMinute = rs.getInt(rs.getColumnIndex("notificationMinute"));
         int countToRemind = rs.getInt(rs.getColumnIndex("countToRemind"));
         String remindEvery = rs.getString(rs.getColumnIndex("remindEvery"));
+        String categoryTitle = rs.getString(rs.getColumnIndex("categoryTitle"));
         int childId = rs.getInt(rs.getColumnIndex("childId"));
 
         Calendar calendar = Calendar.getInstance();
@@ -183,6 +187,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return new Bill(title, description, billAmount, billDate, paid,
                 notificationHour, notificationMinute, countToRemind, remindEvery,
+                categoryTitle,
                 id, childId);
     }
 
